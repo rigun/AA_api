@@ -7,79 +7,68 @@ use Illuminate\Http\Request;
 
 class SparepartController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        return Sparepart::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function store(Request $request){
+        $this->validateWith([
+            'code' => 'required|max:16|unique:spareparts',
+            'name' => 'required',
+            'buy' => 'required',
+            'sell' => 'required',
+            'merk' => 'required',
+            'type' => 'required',
+            'position' => 'required',
+            'stock' => 'required',
+        ]);
+        $item = new Sparepart();
+        $item->code = $request->code;
+        $item->name = $request->name;
+        $item->buy = $request->buy;
+        $item->sell = $request->sell;
+        $item->merk = $request->merk;
+        $item->type = $request->type;
+        $item->position = $request->position;
+        $item->stock = $request->stock;
+        $item->save();
+        return response()->json(['status'=>'1','msg'=>'Sparepart '.$item->name.' berhasil dibuat','result' => $item]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function update(Request $request,$code){
+        $this->validateWith([
+            'name' => 'required',
+            'buy' => 'required',
+            'sell' => 'required',
+            'merk' => 'required',
+            'type' => 'required',
+            'position' => 'required',
+            'stock' => 'required',
+        ]);
+        if($item = Sparepart::where('code',$code)->first()){
+            $item->name = $request->name;
+            $item->buy = $request->buy;
+            $item->sell = $request->sell;
+            $item->merk = $request->merk;
+            $item->type = $request->type;
+            $item->position = $request->position;
+            $item->stock = $request->stock;
+            $item->save();    
+            return response()->json(['status'=>'1','msg'=>'Sparepart berhasil diubah menjadi '.$item->name,'result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Sparepart  $sparepart
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Sparepart $sparepart)
-    {
-        //
+    public function show($code){
+        if($item = Sparepart::where('code',$code)->first()){
+            return response()->json(['status'=>'1','msg'=>'Sparepart berhasil ditemukan','result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Sparepart  $sparepart
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Sparepart $sparepart)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Sparepart  $sparepart
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Sparepart $sparepart)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Sparepart  $sparepart
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Sparepart $sparepart)
-    {
-        //
+    public function destroy($code){
+        if($item = Sparepart::where('code',$code)->first()){
+            $item->delete();
+            return response()->json(['status'=>'1','msg'=>'Sparepart berhasil dihapus','result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
     }
 }

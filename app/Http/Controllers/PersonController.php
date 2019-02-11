@@ -4,82 +4,71 @@ namespace App\Http\Controllers;
 
 use App\Person;
 use Illuminate\Http\Request;
-
+use App\Role;
 class PersonController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index()
     {
-        //
+        return Person::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+    public function show($role){
+        if($r = Role::where('name',$role)->first()){
+            return response()->json(['status'=>'1','msg'=>'Data berhasil ditemukan','result' => Person::where('role_id',$r->id)->get()]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Role tidak ditemukan','result' => []]);
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Person  $person
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Person $person)
-    {
-        //
+    public function searchById($id){
+        if($person = Person::where('id',$id)->first()){
+            return response()->json(['status'=>'1','msg'=>'Data berhasil ditemukan','result' => $person]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Data tidak ditemukan','result' => []]);
     }
+    public function store(Request $request,$role){
+        $this->validateWith([
+            'name' => 'required',
+            'phoneNumber' => 'required|max:16|unique:people',
+            'address' => 'required',
+            'city' => 'required',
+          ]);
+        if($r = Role::where('name',$role)->first()){
+            $person = new Person();
+            $person->name = $request->name;
+            $person->phoneNumber = $request->phoneNumber;
+            $person->address = $request->address;
+            $person->city = $request->city;
+            $person->role_id = $r->id;
+            $person->save();
+            return response()->json(['status'=>'1','msg'=>'Data berhasil ditambahkan','result' => $person]);
+        };
+        return response()->json(['status'=>'0','msg'=>'Role tidak ditemukan','result' => []]);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Person  $person
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Person $person)
-    {
-        //
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Person  $person
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Person $person)
-    {
-        //
+    public function update(Request $request,$id){
+        $this->validateWith([
+            'name' => 'required',
+            'phoneNumber' => 'required|max:16|unique:people,phoneNumber,'.$id,
+            'address' => 'required',
+            'city' => 'required',
+          ]);
+        if($person = Person::where('id',$id)->first()){
+            $person->name = $request->name;
+            $person->phoneNumber = $request->phoneNumber;
+            $person->address = $request->address;
+            $person->city = $request->city;
+            $person->save();
+            return response()->json(['status'=>'1','msg'=>'Data berhasil diperbaharui','result' => $person]);
+        };
+        return response()->json(['status'=>'0','msg'=>'Data tidak ditemukan','result' => []]);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Person  $person
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Person $person)
+    public function destroy($id)
     {
-        //
+        if($person = Person::where('id',$id)->first()){
+            $person->delete();
+            return response()->json(['status'=>'1','msg'=>'Data berhasil dihapus']);
+        };
+        return response()->json(['status'=>'0','msg'=>'Data tidak ditemukan']);
     }
 }

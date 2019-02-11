@@ -7,79 +7,46 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        return Order::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function store(Request $request){
+        $this->validateWith([
+            'people_id' => 'required',
+            'status' => 'required',
+        ]);
+        $item = new Order();
+        $item->people_id = $request->people_id;
+        $item->status = $request->status;
+        $item->save();
+        return response()->json(['status'=>'1','msg'=>'Order berhasil dibuat','result' => $item]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function update(Request $request,$id){
+        $this->validateWith([
+            'people_id' => 'required',
+            'status' => 'required',
+        ]);
+        if($item = Order::where('id',$id)->first()){
+            $item->people_id = $request->people_id;
+            $item->status = $request->status;
+            $item->save();    
+            return response()->json(['status'=>'1','msg'=>'Order berhasil diubah menjadi ','result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Order tidak ditemukan','result' => []]);
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Order $order)
-    {
-        //
+    public function show($id){
+        if($item = Order::where('id',$id)->first()){
+            return response()->json(['status'=>'1','msg'=>'Order berhasil ditemukan','result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Order tidak ditemukan','result' => []]);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Order $order)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Order $order)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Order $order)
-    {
-        //
+    public function destroy($id){
+        if($item = Order::where('id',$id)->first()){
+            $item->delete();
+            return response()->json(['status'=>'1','msg'=>'Order berhasil dihapus','result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Order tidak ditemukan','result' => []]);
     }
 }

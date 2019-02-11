@@ -7,79 +7,46 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        return Service::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function store(Request $request){
+        $this->validateWith([
+            'name' => 'required',
+            'price' => 'required',
+        ]);
+        $item = new Service();
+        $item->name = $request->name;
+        $item->price = $request->price;
+        $item->save();
+        return response()->json(['status'=>'1','msg'=>'Service '.$item->name.' berhasil dibuat','result' => $item]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function update(Request $request,$id){
+        $this->validateWith([
+            'name' => 'required',
+            'price' => 'required',
+        ]);
+        if($item = Service::where('id',$id)->first()){
+            $item->name = $request->name;
+            $item->price = $request->price;
+            $item->save();    
+            return response()->json(['status'=>'1','msg'=>'Service berhasil diubah menjadi '.$item->name,'result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Service tidak ditemukan','result' => []]);
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Service  $service
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Service $service)
-    {
-        //
+    public function show($id){
+        if($item = Service::where('id',$id)->first()){
+            return response()->json(['status'=>'1','msg'=>'Service berhasil ditemukan','result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Service tidak ditemukan','result' => []]);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Service  $service
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Service $service)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Service  $service
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Service $service)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Service  $service
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Service $service)
-    {
-        //
+    public function destroy($id){
+        if($item = Service::where('id',$id)->first()){
+            $item->delete();
+            return response()->json(['status'=>'1','msg'=>'Service berhasil dihapus','result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Service tidak ditemukan','result' => []]);
     }
 }
