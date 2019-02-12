@@ -10,12 +10,17 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, enctype');
+header('Access-Control-Allow-Methods: GET, PATCH, POST, DELETE');
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 Route::group(['middleware' => ['jwt.verify']], function() {
+    Route::get('/user', 'UserController@getAuthenticatedUser');
     Route::get('/', 'UserController@index');
+
     Route::get('/person', 'PersonController@index');
     Route::get('/person/{id}', 'PersonController@searchById');
     Route::get('/personbyrole/{role}', 'PersonController@show');
