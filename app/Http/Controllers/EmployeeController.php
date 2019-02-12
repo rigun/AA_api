@@ -22,12 +22,13 @@ class EmployeeController extends Controller
     public function store(Request $request){
         $this->validateWith([
             'salary' => 'required',
-            'branch' => 'required'
+            'branch' => 'required',
+            'role' => 'required'
             ]);
         if($b = Branch::where('name',$request->branch)->first()){
 
             $personController = new PersonController();
-            $personController->store($request,'montir');
+            $personController->store($request,$request->role);
             if($person = Person::where('phoneNumber',$request->phoneNumber)->first()){
                 $employee = new Employee();
                 $employee->salary = $request->salary;
