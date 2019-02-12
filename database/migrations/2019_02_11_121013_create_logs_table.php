@@ -17,9 +17,10 @@ class CreateLogsTable extends Migration
             $table->increments('id');
             $table->string('sparepart_code');
             $table->foreign('sparepart_code')
-                    ->references('code')->on('spareparts')
-                    ->onDelete('cascade');
-            $table->integer('total');
+                    ->references('code')->on('spareparts');
+            $table->double('buy');
+            $table->double('sell');
+            $table->integer('totalBuy');
             $table->string('transactionType');
             $table->timestamps();
         });

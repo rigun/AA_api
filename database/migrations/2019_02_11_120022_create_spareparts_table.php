@@ -22,6 +22,7 @@ class CreateSparepartsTable extends Migration
             $table->string('type');
             $table->string('position');
             $table->integer('stock')->default(0);
+            $table->integer('status')->default(0);
             $table->timestamps();
             $table->primary('code');
         });
