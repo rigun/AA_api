@@ -25,7 +25,7 @@ class EmployeeController extends Controller
             'branch' => 'required',
             'role' => 'required'
             ]);
-        if($b = Branch::where('name',$request->branch)->first()){
+        if($b = Branch::where('id',$request->branch)->first()){
 
             $personController = new PersonController();
             $personController->store($request,$request->role);
