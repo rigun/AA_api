@@ -25,7 +25,6 @@ class CreateTransactiondetailServicesTable extends Migration
                     ->onDelete('cascade');
             $table->integer('total');
             $table->double('price');
-            $table->timestamps();
         });
     }
 

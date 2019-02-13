@@ -22,7 +22,12 @@ class CreateSparepartsTable extends Migration
             $table->string('type');
             $table->string('position');
             $table->integer('stock')->default(0);
+            $table->integer('limitstock')->default(0);
             $table->integer('status')->default(0);
+            $table->unsignedInteger('people_id');
+            $table->foreign('people_id')
+                  ->references('id')->on('people')
+                  ->onDelete('cascade');
             $table->timestamps();
             $table->primary('code');
         });

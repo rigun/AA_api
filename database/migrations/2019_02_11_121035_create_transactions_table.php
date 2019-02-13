@@ -20,7 +20,11 @@ class CreateTransactionsTable extends Migration
             $table->double('totalSpareparts')->default(0);
             $table->double('totalCost')->default(0);
             $table->double('payment')->default(0);
-            $table->unsignedInteger('discount_id')->nullable();
+            $table->double('diskon')->default(0);
+            $table->unsignedInteger('branch_id');
+            $table->foreign('branch_id')
+                    ->references('id')->on('branches')
+                    ->onDelete('cascade');
             $table->unsignedInteger('cs_id');
             $table->foreign('cs_id')
                     ->references('id')->on('users')

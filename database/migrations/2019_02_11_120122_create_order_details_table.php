@@ -23,8 +23,10 @@ class CreateOrderDetailsTable extends Migration
             $table->foreign('sparepart_code')
                   ->references('code')->on('spareparts')
                   ->onDelete('cascade');
-            $table->string('unit');
+            $table->double('unit');
             $table->integer('total');
+            $table->integer('totalAccept')->default(0);
+            $table->integer('status')->default(0);
             $table->timestamps();
         });
     }
