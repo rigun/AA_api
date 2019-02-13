@@ -16,14 +16,8 @@ class CreateSparepartsTable extends Migration
         Schema::create('spareparts', function (Blueprint $table) {
             $table->string('code')->unique();
             $table->string('name');
-            $table->double('buy')->default(0);
-            $table->double('sell')->default(0);
             $table->string('merk');
             $table->string('type');
-            $table->string('position');
-            $table->integer('stock')->default(0);
-            $table->integer('limitstock')->default(0);
-            $table->integer('status')->default(0);
             $table->unsignedInteger('people_id');
             $table->foreign('people_id')
                   ->references('id')->on('people')
