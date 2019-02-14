@@ -11,6 +11,6 @@ class Person extends Model
         return $this->hasOne('App\Role','id','role_id');
     }
     public function user(){
-        return $this->belongsTo('App\User','people_id');
+        return $this->belongsTo('App\User','people_id','id');
     }
 }
