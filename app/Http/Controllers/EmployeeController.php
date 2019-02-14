@@ -13,7 +13,7 @@ class EmployeeController extends Controller
     
     public function index()
     {
-        return Employee::with(['detail','branch'])->get();
+        return Employee::with(['detail','branch','user'])->orderBy('created_at','desc')->get();
     }
     public function show($id)
     {

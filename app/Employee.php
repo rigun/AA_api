@@ -10,7 +10,7 @@ class Employee extends Model
         'branch_id', 'people_id',
     ];
     public function detail(){
-        return $this->hasOne('App\Person','id','people_id')->with('role');
+        return $this->hasOne('App\Person','id','people_id')->with(['role','user']);
     }
     public function branch(){
         return $this->hasOne('App\Branch','id','branch_id');
