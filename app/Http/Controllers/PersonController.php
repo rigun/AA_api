@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Person;
 use Illuminate\Http\Request;
 use App\Role;
+use App\Http\Controllers\UserController;
+
 class PersonController extends Controller
 {
     
@@ -36,10 +38,13 @@ class PersonController extends Controller
     
         $customMessages = [
             'required' => ':attribute harus diisi.',
-            'phoneNumber.unique' => 'Nomor telepon sudah terdaftar'
+            'unique' => ':attribute sudah terdaftar'
         ];
-    
-        $this->validate($request, $rules, $customMessages);
+
+        $attributes = [
+            'phoneNumber' => 'Nomor Telepon',
+        ];
+        $this->validate($request, $rules, $customMessages, $attributes);
 
       
         if($r = Role::where('name',$role)->first()){
@@ -50,6 +55,10 @@ class PersonController extends Controller
             $person->city = $request->city;
             $person->role_id = $r->id;
             $person->save();
+            if($r->name == 'cs' || $r->name == 'kasir' || $r->name == 'owner'){
+                $userController = new UserController();
+                $userController->storeByEmployee($request,$person->id);    
+            }
             return response()->json(['status'=>'1','msg'=>'Data berhasil ditambahkan','result' => $person]);
         };
         return response()->json(['status'=>'0','msg'=>'Role tidak ditemukan','result' => []]);

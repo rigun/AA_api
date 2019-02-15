@@ -39,6 +39,30 @@ class UserController extends Controller
     {
         //
     }
+    public function storeByEmployee(Request $request,$id)
+    {
+        $rules = [
+            'email' => 'required|unique:users',
+            'password' => 'required',
+        ];
+    
+        $customMessages = [
+            'required' => ':attribute harus diisi.',
+            'unique' => ':attribute sudah terdaftar'
+        ];
+
+        $attributes = [
+            'email' => 'Email',
+        ];
+        
+        $this->validate($request, $rules, $customMessages,$attributes);
+
+        $user = new User();
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->people_id = $id;
+        $user->save();
+    }
 
     /**
      * Display the specified resource.
