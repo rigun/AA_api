@@ -27,12 +27,21 @@ class PersonController extends Controller
         return response()->json(['status'=>'0','msg'=>'Data tidak ditemukan','result' => []]);
     }
     public function store(Request $request,$role){
-        $this->validateWith([
+        $rules = [
             'name' => 'required',
             'phoneNumber' => 'required|max:16|unique:people',
             'address' => 'required',
             'city' => 'required',
-          ]);
+        ];
+    
+        $customMessages = [
+            'required' => ':attribute harus diisi.',
+            'phoneNumber.unique' => 'Nomor telepon sudah terdaftar'
+        ];
+    
+        $this->validate($request, $rules, $customMessages);
+
+      
         if($r = Role::where('name',$role)->first()){
             $person = new Person();
             $person->name = $request->name;
