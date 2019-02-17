@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Sparepart;
+use App\VehicleSparepart;
 use Illuminate\Http\Request;
 
 class SparepartController extends Controller
@@ -25,6 +26,7 @@ class SparepartController extends Controller
             'merk' => 'required',
             'type' => 'required',
             'people_id' => 'required',
+            'vehicles' => 'required'
         ]);
         $item = new Sparepart();
         $item->code = $request->code;
@@ -33,6 +35,13 @@ class SparepartController extends Controller
         $item->type = $request->type;
         $item->people_id = $request->people_id;
         $item->save();
+
+        foreach($request->vehicles as $vehicle){
+            $vehicleSparepart = new VehicleSparepart();
+            $vehicleSparepart->vehicle_id = $vehicle;
+            $vehicleSparepart->sparepart_code = $item->code;
+            $vehicleSparepart->save();
+        }
         return response()->json(['status'=>'1','msg'=>'Sparepart '.$item->name.' berhasil dibuat','result' => $item]);
     }
     public function update(Request $request,$code){
@@ -59,7 +68,7 @@ class SparepartController extends Controller
         return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
     }
     public function showBySupplier($supplier_id){
-        return Sparepart::where('people_id',$supplier_id)->get();
+        return Sparepart::where('people_id',$supplier_id)->with('vehicle')->get();
     }
     public function destroy($code){
         if($item = Sparepart::where('code',$code)->first()){
