@@ -67,7 +67,6 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/employee/{id}','EmployeeController@update');
     Route::delete('/employee/{id}','EmployeeController@destroy');
 });
-Route::get('/employee','EmployeeController@index');
 
 Route::group([
     'middleware' => 'api',

@@ -26,12 +26,10 @@ class SparepartController extends Controller
         $item = new Sparepart();
         $item->code = $request->code;
         $item->name = $request->name;
-        $item->buy = $request->buy;
-        $item->sell = $request->sell;
         $item->merk = $request->merk;
         $item->type = $request->type;
-        $item->position = $request->position;
-        $item->stock = $request->stock;
+        $item->people_id = $request->people_id;
+        $item->branch_id = $request->branch_id;
         $item->save();
         return response()->json(['status'=>'1','msg'=>'Sparepart '.$item->name.' berhasil dibuat','result' => $item]);
     }
@@ -60,6 +58,12 @@ class SparepartController extends Controller
     }
     public function show($code){
         if($item = Sparepart::where('code',$code)->first()){
+            return response()->json(['status'=>'1','msg'=>'Sparepart berhasil ditemukan','result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
+    }
+    public function showBySupplier($supplier_id){
+        if($item = Sparepart::where('code',$supplier_id)->first()){
             return response()->json(['status'=>'1','msg'=>'Sparepart berhasil ditemukan','result' => $item]);
         }
         return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);

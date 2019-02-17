@@ -36,6 +36,17 @@ class ServiceController extends Controller
         }
         return response()->json(['status'=>'0','msg'=>'Service tidak ditemukan','result' => []]);
     }
+    public function updateStatus(Request $request,$id){
+        $this->validateWith([
+            'status' => 'required',
+        ]);
+        if($item = Service::where('id',$id)->first()){
+            $item->status = $request->status;
+            $item->save();    
+            return response()->json(['status'=>'1','msg'=>'Status service berhasil diubah','result' => $item]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Service tidak ditemukan','result' => []]);
+    }
     public function show($id){
         if($item = Service::where('id',$id)->first()){
             return response()->json(['status'=>'1','msg'=>'Service berhasil ditemukan','result' => $item]);
