@@ -12,7 +12,11 @@ class SparepartController extends Controller
         return Sparepart::all();
     }
     public function isUniqueCode(Request $request){
-        return Sparepart::where('code',$request->code)->exists();
+        if(Sparepart::where('code',$request->code)->exists()){
+            return 1;
+        }else{
+            return 0;
+        }
     }
     public function store(Request $request){
         $this->validateWith([
