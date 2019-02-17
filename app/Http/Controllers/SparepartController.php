@@ -70,11 +70,7 @@ class SparepartController extends Controller
     }
     public function destroy($code){
         if($item = Sparepart::where('code',$code)->first()){
-            if($vehicleSparepart = VehicleSparepart::where('sparepart_code',$item->code)->get()){
-                foreach($vehicleSparepart as $vS){
-                    $vS->delete();
-                }
-            }
+            $item->vehicle()->detach();
             $item->delete();
             return response()->json(['status'=>'1','msg'=>'Sparepart berhasil dihapus','result' => $item]);
         }
