@@ -13,6 +13,6 @@ class Branch extends Model
         return $this->hasMany('App\Transaction');
     }
     public function spareparts(){
-        return $this->hasMany('App\Sparepart');
+        return $this->hasMany('App\SparepartBranch');
     }
 }
