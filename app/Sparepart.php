@@ -11,6 +11,6 @@ class Sparepart extends Model
     public $incrementing = false; 
 
     public function vehicle(){
-        return $this->hasMany('App/VehicleSparepart')->with('sparepart');
+        return $this->hasMany('App\VehicleSparepart')->with('sparepart');
     }
 }

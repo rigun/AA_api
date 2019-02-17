@@ -8,6 +8,6 @@ class VehicleSparepart extends Model
 {
     public $timestamps = false;
     public function sparepart(){
-        return $this->belongsToMany('App/Sparepart','code','sparepart_code');
+        return $this->belongsToMany('App\Sparepart','code','sparepart_code');
     }
 }
