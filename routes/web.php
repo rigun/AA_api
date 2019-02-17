@@ -53,6 +53,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/sparepart','SparepartController@store');
     Route::post('/sparepart/{code}','SparepartController@update');
     Route::delete('/sparepart/{code}','SparepartController@destroy');
+    Route::post('/sparepartIsUnique','SparepartController@isUniqueCode');
 
     Route::get('/vehicle','VehicleController@index');
     Route::get('/vehicle/{id}','VehicleController@show');

@@ -11,7 +11,9 @@ class SparepartController extends Controller
     {
         return Sparepart::all();
     }
-
+    public function isUniqueCode(Request $request){
+        return Sparepart::where('code',$request->code)->exists();
+    }
     public function store(Request $request){
         $this->validateWith([
             'code' => 'required|max:16|unique:spareparts',
