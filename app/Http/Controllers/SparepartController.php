@@ -16,12 +16,9 @@ class SparepartController extends Controller
         $this->validateWith([
             'code' => 'required|max:16|unique:spareparts',
             'name' => 'required',
-            'buy' => 'required',
-            'sell' => 'required',
             'merk' => 'required',
             'type' => 'required',
-            'position' => 'required',
-            'stock' => 'required',
+            'people_id' => 'required',
         ]);
         $item = new Sparepart();
         $item->code = $request->code;
@@ -29,28 +26,21 @@ class SparepartController extends Controller
         $item->merk = $request->merk;
         $item->type = $request->type;
         $item->people_id = $request->people_id;
-        $item->branch_id = $request->branch_id;
         $item->save();
         return response()->json(['status'=>'1','msg'=>'Sparepart '.$item->name.' berhasil dibuat','result' => $item]);
     }
     public function update(Request $request,$code){
         $this->validateWith([
             'name' => 'required',
-            'buy' => 'required',
-            'sell' => 'required',
             'merk' => 'required',
             'type' => 'required',
-            'position' => 'required',
-            'stock' => 'required',
+            'people_id' => 'required',
         ]);
         if($item = Sparepart::where('code',$code)->first()){
             $item->name = $request->name;
-            $item->buy = $request->buy;
-            $item->sell = $request->sell;
             $item->merk = $request->merk;
             $item->type = $request->type;
-            $item->position = $request->position;
-            $item->stock = $request->stock;
+            $item->people_id = $request->people_id;
             $item->save();    
             return response()->json(['status'=>'1','msg'=>'Sparepart berhasil diubah menjadi '.$item->name,'result' => $item]);
         }
@@ -63,10 +53,7 @@ class SparepartController extends Controller
         return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
     }
     public function showBySupplier($supplier_id){
-        if($item = Sparepart::where('code',$supplier_id)->first()){
-            return response()->json(['status'=>'1','msg'=>'Sparepart berhasil ditemukan','result' => $item]);
-        }
-        return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
+        return Sparepart::where('people_id',$supplier_id)->get();
     }
     public function destroy($code){
         if($item = Sparepart::where('code',$code)->first()){
