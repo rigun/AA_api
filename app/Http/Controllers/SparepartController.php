@@ -36,12 +36,7 @@ class SparepartController extends Controller
         $item->people_id = $request->people_id;
         $item->save();
 
-        foreach($request->vehicles as $vehicle){
-            $vehicleSparepart = new VehicleSparepart();
-            $vehicleSparepart->vehicle_id = $vehicle;
-            $vehicleSparepart->sparepart_code = $item->code;
-            $vehicleSparepart->save();
-        }
+        $item->vehicle()->sync($request->vehicles);
         return response()->json(['status'=>'1','msg'=>'Sparepart '.$item->name.' berhasil dibuat','result' => $item]);
     }
     public function update(Request $request,$code){
@@ -50,8 +45,7 @@ class SparepartController extends Controller
             'merk' => 'required',
             'type' => 'required',
             'people_id' => 'required',
-            'deleteVehicle' => 'required',
-            'newVehicle' => 'required'
+            'vehicles' => 'required'
         ]);
         if($item = Sparepart::where('code',$code)->first()){
             $item->name = $request->name;
@@ -60,17 +54,7 @@ class SparepartController extends Controller
             $item->people_id = $request->people_id;
             $item->save();    
 
-            foreach($request->newVehicle as $nVehicle){
-                $vehicleSparepart = new VehicleSparepart();
-                $vehicleSparepart->vehicle_id = $nVehicle;
-                $vehicleSparepart->sparepart_code = $item->code;
-                $vehicleSparepart->save();
-            }
-            foreach($request->deleteVehicle as $oVehicle){
-                if($oV = VehicleSparepart::where([['vehicle_id',$oVehicle],['sparepart_code',$item->code]])->first()){
-                    $oV->delete();
-                }
-            }
+            $item->vehicle()->sync($request->vehicles);
             return response()->json(['status'=>'1','msg'=>'Sparepart berhasil diubah menjadi '.$item->name,'result' => $item]);
         }
         return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
