@@ -50,6 +50,8 @@ class SparepartController extends Controller
             'merk' => 'required',
             'type' => 'required',
             'people_id' => 'required',
+            'deleteVehicle' => 'required',
+            'newVehicle' => 'required'
         ]);
         if($item = Sparepart::where('code',$code)->first()){
             $item->name = $request->name;
@@ -57,6 +59,18 @@ class SparepartController extends Controller
             $item->type = $request->type;
             $item->people_id = $request->people_id;
             $item->save();    
+
+            foreach($request->newVehicle as $nVehicle){
+                $vehicleSparepart = new VehicleSparepart();
+                $vehicleSparepart->vehicle_id = $nVehicle;
+                $vehicleSparepart->sparepart_code = $item->code;
+                $vehicleSparepart->save();
+            }
+            foreach($request->deleteVehicle as $oVehicle){
+                if($oV = VehicleSparepart::where([['vehicle_id',$oVehicle],['sparepart_code',$item->code]])->first()){
+                    $oV->delete();
+                }
+            }
             return response()->json(['status'=>'1','msg'=>'Sparepart berhasil diubah menjadi '.$item->name,'result' => $item]);
         }
         return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
@@ -72,6 +86,11 @@ class SparepartController extends Controller
     }
     public function destroy($code){
         if($item = Sparepart::where('code',$code)->first()){
+            if($vehicleSparepart = VehicleSparepart::where('sparepart_code',$item->code)->get()){
+                foreach($vehicleSparepart as $vS){
+                    $vS->delete();
+                }
+            }
             $item->delete();
             return response()->json(['status'=>'1','msg'=>'Sparepart berhasil dihapus','result' => $item]);
         }
