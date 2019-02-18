@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Sparepart;
+use App\SparepartBranch;
 use App\VehicleSparepart;
 use Illuminate\Http\Request;
 
@@ -75,5 +76,25 @@ class SparepartController extends Controller
             return response()->json(['status'=>'1','msg'=>'Sparepart berhasil dihapus','result' => $item]);
         }
         return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
+    }
+
+    public function showByBranch($branchId){
+        return SparepartBranch::where('branch_id',$branchId)->with('sparepart')->get();
+    }
+    public function storeToBranch(Request $request){
+        $this->validateWith([
+            'sparepart_code' => 'required',
+            'branch_id' => 'required',
+            'position' => 'required',
+            'limitstock' => 'required'
+        ]);
+        $item = new SparepartBranch();
+        $item->sparepart_code = $request->sparepart_code;
+        $item->branch_id = $request->branch_id;
+        $item->position = $request->position;
+        $item->limitstock = $request->limitstock;
+        $item->save();
+            
+        return response()->json(['status'=>'1','msg'=>'Sparepart '.$item->name.' berhasil dibuat','result' => $item]);
     }
 }

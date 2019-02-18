@@ -49,6 +49,8 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
     Route::get('/sparepart','SparepartController@index');
     Route::get('/sparepartBySupplier/{supplierId}','SparepartController@showBySupplier');
+    Route::get('/sparepartBranch/{branchId}','SparepartController@showByBranch');
+    Route::post('/sparepartBranch/{branchId}','SparepartController@storeToBranch');
     Route::get('/sparepart/{code}','SparepartController@show');
     Route::post('/sparepart','SparepartController@store');
     Route::post('/sparepart/{code}','SparepartController@update');
