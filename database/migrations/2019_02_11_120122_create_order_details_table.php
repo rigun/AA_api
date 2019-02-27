@@ -27,7 +27,6 @@ class CreateOrderDetailsTable extends Migration
             $table->integer('total');
             $table->integer('totalAccept')->default(0);
             $table->integer('status')->default(0);
-            $table->timestamps();
         });
     }
 

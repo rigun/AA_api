@@ -14,6 +14,7 @@ class CreateSparepartBranchesTable extends Migration
     public function up()
     {
         Schema::create('sparepart_branches', function (Blueprint $table) {
+            $table->increments('id');
             $table->string('sparepart_code');
             $table->foreign('sparepart_code')
                     ->references('code')->on('spareparts')
@@ -28,7 +29,7 @@ class CreateSparepartBranchesTable extends Migration
             $table->integer('stock')->default(0);
             $table->integer('limitstock')->default(0);
             $table->integer('status')->default(0);
-            $table->primary(['branch_id','sparepart_code']);            
+            $table->timestamps();
         });
     }
 

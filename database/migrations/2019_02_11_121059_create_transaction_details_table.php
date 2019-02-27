@@ -21,12 +21,10 @@ class CreateTransactionDetailsTable extends Migration
                     ->onDelete('cascade');
             $table->unsignedInteger('vehicleCustomer_id');
             $table->foreign('vehicleCustomer_id')
-                    ->references('id')->on('vehicle_customers')
-                    ->onDelete('cascade');
-            $table->unsignedInteger('employee_id');
-            $table->foreign('employee_id')
-                    ->references('id')->on('employees')
-                    ->onDelete('cascade');
+                    ->references('id')->on('vehicle_customers');            
+            $table->unsignedInteger('montir_id');
+            $table->foreign('montir_id')
+                    ->references('id')->on('people');
         });
     }
 

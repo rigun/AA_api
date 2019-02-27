@@ -18,8 +18,9 @@ class CreateSparepartsTable extends Migration
             $table->string('name');
             $table->string('merk');
             $table->string('type');
-            $table->unsignedInteger('people_id');
-            $table->foreign('people_id')
+            $table->string('picture');
+            $table->unsignedInteger('supplier_id');
+            $table->foreign('supplier_id')
                   ->references('id')->on('people')
                   ->onDelete('cascade');
             $table->timestamps();
