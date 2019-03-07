@@ -41,7 +41,6 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/role/{id}','RoleController@update');
     Route::delete('/role/{id}','RoleController@destroy');
     
-    Route::get('/service','ServiceController@index');
     Route::get('/service/{id}','ServiceController@show');
     Route::post('/service','ServiceController@store');
     Route::post('/service/{id}','ServiceController@update');
@@ -71,6 +70,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/employee/{id}','EmployeeController@update');
     Route::delete('/employee/{id}','EmployeeController@destroy');
 });
+Route::get('/service','ServiceController@index');
 
 Route::group([
     'middleware' => 'api',

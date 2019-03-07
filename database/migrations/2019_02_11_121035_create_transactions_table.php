@@ -28,8 +28,8 @@ class CreateTransactionsTable extends Migration
             $table->unsignedInteger('cs_id');
             $table->foreign('cs_id')
                     ->references('id')->on('people');
-            $table->unsignedInteger('konsumen_id');
-            $table->foreign('konsumen_id')
+            $table->unsignedInteger('customer_id');
+            $table->foreign('customer_id')
                     ->references('id')->on('people');
             $table->unsignedInteger('cashier_id')->nullable();
             $table->foreign('cashier_id')

@@ -20,8 +20,8 @@ class CreateVehicleCustomersTable extends Migration
             $table->foreign('vehicle_id')
                 ->references('id')->on('vehicles')
                 ->onDelete('cascade');
-            $table->unsignedInteger('people_id');
-            $table->foreign('people_id')
+            $table->unsignedInteger('customer_id');
+            $table->foreign('customer_id')
                     ->references('id')->on('people')
                     ->onDelete('cascade');
             $table->timestamps();

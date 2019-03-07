@@ -14,15 +14,15 @@ class CreateSalesSuppliersTable extends Migration
     public function up()
     {
         Schema::create('sales_suppliers', function (Blueprint $table) {
-            $table->unsignedInteger('people_id');
-            $table->foreign('people_id')
+            $table->unsignedInteger('sales_id');
+            $table->foreign('sales_id')
                     ->references('id')->on('people')
                     ->onDelete('cascade');
             $table->unsignedInteger('order_id');
             $table->foreign('order_id')
                     ->references('id')->on('orders')
                     ->onDelete('cascade');
-            $table->primary(['people_id','order_id']);
+            $table->primary(['sales_id','order_id']);
         });
     }
 

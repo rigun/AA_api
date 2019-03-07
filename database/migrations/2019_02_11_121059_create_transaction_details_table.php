@@ -22,7 +22,7 @@ class CreateTransactionDetailsTable extends Migration
             $table->unsignedInteger('vehicleCustomer_id');
             $table->foreign('vehicleCustomer_id')
                     ->references('id')->on('vehicle_customers');            
-            $table->unsignedInteger('montir_id');
+            $table->unsignedInteger('montir_id')->nullable();
             $table->foreign('montir_id')
                     ->references('id')->on('people');
         });
