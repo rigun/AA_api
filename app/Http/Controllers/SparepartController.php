@@ -67,7 +67,7 @@ class SparepartController extends Controller
         return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
     }
     public function showBySupplier($supplier_id){
-        return Sparepart::where('people_id',$supplier_id)->with('vehicle')->get();
+        return Sparepart::where('supplier_id',$supplier_id)->with('vehicle')->get();
     }
     public function destroy($code){
         if($item = Sparepart::where('code',$code)->first()){
