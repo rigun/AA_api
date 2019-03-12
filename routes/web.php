@@ -65,6 +65,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::delete('/vehicle/{id}','VehicleController@destroy');
 
     Route::get('/employee','EmployeeController@index');
+    Route::get('/employeebyBranch/{branch_id}','EmployeeController@showByBranch');
     Route::get('/employee/{id}','EmployeeController@show');
     Route::post('/employee','EmployeeController@store');
     Route::post('/employee/{id}','EmployeeController@update');

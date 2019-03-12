@@ -15,6 +15,10 @@ class EmployeeController extends Controller
     {
         return Employee::with(['detail','branch'])->orderBy('created_at','desc')->get();
     }
+    public function showByBranch($branch_id)
+    {
+        return Employee::where('branch_id',$branch_id)->with(['detail'])->orderBy('created_at','desc')->get();
+    }
     public function show($id)
     {
         return Employee::where('id',$id)->with(['detail','branch'])->first();

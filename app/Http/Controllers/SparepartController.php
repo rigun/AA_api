@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class SparepartController extends Controller
 {
+    private $photos_path;
+
+    public function __construct()
+    {
+        $this->photos_path = public_path('/images/sparepart');
+
+    }
     public function index()
     {
         return Sparepart::all();
@@ -27,7 +34,8 @@ class SparepartController extends Controller
             'merk' => 'required',
             'type' => 'required',
             'people_id' => 'required',
-            'vehicles' => 'required'
+            'vehicles' => 'required',
+            'picture' => 'required'
         ]);
         $item = new Sparepart();
         $item->code = $request->code;
@@ -35,6 +43,16 @@ class SparepartController extends Controller
         $item->merk = $request->merk;
         $item->type = $request->type;
         $item->people_id = $request->people_id;
+        // image
+        $image = $request->picture;  // your base64 encoded
+        $image = str_replace('data:image/png;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+        $name = sha1(date('YmdHis') . str_random(30));
+        $save_name = $name .'.'.'png';
+        \File::put($this->photos_path.'/'. $save_name, base64_decode($image));
+        $item->picture = $save_name;
+        // image
+
         $item->save();
 
         $item->vehicle()->sync($request->vehicles);
