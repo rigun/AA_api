@@ -73,7 +73,7 @@ class SparepartController extends Controller
             $item->supplier_id = $request->supplier_id;
             $item->save();    
 
-            $item->vehicle()->sync(explode(',',$request->vehicles));
+            $item->vehicle()->sync($request->vehicles[0]);
             return response()->json(['status'=>'1','msg'=>'Sparepart berhasil diubah menjadi '.$item->name,'result' => $item]);
         }
         return response()->json(['status'=>'0','msg'=>'Sparepart tidak ditemukan','result' => []]);
