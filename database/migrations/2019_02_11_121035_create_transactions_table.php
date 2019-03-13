@@ -21,6 +21,7 @@ class CreateTransactionsTable extends Migration
             $table->double('totalCost')->default(0);
             $table->double('payment')->default(0);
             $table->double('diskon')->default(0);
+            $table->integer('status')->default(0);
             $table->unsignedInteger('branch_id');
             $table->foreign('branch_id')
                     ->references('id')->on('branches')

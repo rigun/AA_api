@@ -33,7 +33,7 @@ class SparepartController extends Controller
             'name' => 'required',
             'merk' => 'required',
             'type' => 'required',
-            'people_id' => 'required',
+            'supplier_id' => 'required',
             'vehicles' => 'required',
             'picture' => 'required'
         ]);
@@ -42,7 +42,7 @@ class SparepartController extends Controller
         $item->name = $request->name;
         $item->merk = $request->merk;
         $item->type = $request->type;
-        $item->people_id = $request->people_id;
+        $item->supplier_id = $request->supplier_id;
         // image
         $image = $request->picture;  // your base64 encoded
         $image = str_replace('data:image/png;base64,', '', $image);
@@ -63,14 +63,14 @@ class SparepartController extends Controller
             'name' => 'required',
             'merk' => 'required',
             'type' => 'required',
-            'people_id' => 'required',
+            'supplier_id' => 'required',
             'vehicles' => 'required'
         ]);
         if($item = Sparepart::where('code',$code)->first()){
             $item->name = $request->name;
             $item->merk = $request->merk;
             $item->type = $request->type;
-            $item->people_id = $request->people_id;
+            $item->supplier_id = $request->supplier_id;
             $item->save();    
 
             $item->vehicle()->sync($request->vehicles);
