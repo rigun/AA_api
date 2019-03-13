@@ -54,8 +54,7 @@ class SparepartController extends Controller
         // image
 
         $item->save();
-        $arrayData  = (array) $request->vehicles; // related ids
-        $item->vehicle()->sync($arrayData);
+        $item->vehicle()->sync($request->vehicles);
         return response()->json(['status'=>'1','msg'=>'Sparepart '.$item->name.' berhasil dibuat','result' => $item]);
     }
     public function update(Request $request,$code){
