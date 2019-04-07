@@ -20,6 +20,7 @@ header('Access-Control-Allow-Methods: GET, PATCH, POST, DELETE');
 Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/user', 'UserController@getAuthenticatedUser');
     Route::get('/', 'UserController@index');
+    Route::post('/changepassword/{id}', 'UserController@updatePassword');
 
     Route::get('/person', 'PersonController@index');
     Route::get('/person/{id}', 'PersonController@searchById');
@@ -50,6 +51,9 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/sparepartBySupplier/{supplierId}','SparepartController@showBySupplier');
     Route::get('/sparepartBranch/{branchId}','SparepartController@showByBranch');
     Route::post('/sparepartBranch','SparepartController@storeToBranch');
+    Route::patch('/sparepartBranch/{spBrID}','SparepartController@updateSpBranch');
+    Route::delete('/sparepartBranch/{spBrID}','SparepartController@destroyByBranch');
+
     Route::get('/sparepart/{code}','SparepartController@show');
     Route::post('/sparepart','SparepartController@store');
     Route::post('/sparepart/{code}','SparepartController@update');
@@ -72,6 +76,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::delete('/employee/{id}','EmployeeController@destroy');
 });
 Route::get('/service','ServiceController@index');
+Route::get('/cities', 'UserController@city');
 
 Route::group([
     'middleware' => 'api',

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Person;
 use Illuminate\Http\Request;
 use App\Role;
+use App\User;
 use App\Http\Controllers\UserController;
 
 class PersonController extends Controller
@@ -65,18 +66,44 @@ class PersonController extends Controller
 
     }
     public function update(Request $request,$id){
-        $this->validateWith([
+        $rules = [
             'name' => 'required',
             'phoneNumber' => 'required|max:16|unique:people,phoneNumber,'.$id,
             'address' => 'required',
             'city' => 'required',
-          ]);
+        ];
+    
+        $customMessages = [
+            'required' => ':attribute harus diisi.',
+            'unique' => ':attribute sudah terdaftar'
+        ];
+
+        $attributes = [
+            'phoneNumber' => 'Nomor Telepon',
+        ];
+        $this->validate($request, $rules, $customMessages, $attributes);
+        $r = Role::where('name',$request->role)->first();
         if($person = Person::where('id',$id)->first()){
             $person->name = $request->name;
             $person->phoneNumber = $request->phoneNumber;
             $person->address = $request->address;
             $person->city = $request->city;
+            $person->role_id = $r->id;
+            $userController = new UserController();
+            if(!$user = User::where('people_id',$person->id)->first()){
+                if($r->name == 'cs' || $r->name == 'kasir' || $r->name == 'owner'){
+                    $userController->storeByEmployee($request,$person->id);
+                }
+            }else{
+                if($r->name == 'montir'){
+                    $userController->deleteByEmployee($user->id);
+                }else{
+                    $userController->updateByEmployee($request,$user->id);    
+                }
+            }
+                
             $person->save();
+            
             return response()->json(['status'=>'1','msg'=>'Data berhasil diperbaharui','result' => $person]);
         };
         return response()->json(['status'=>'0','msg'=>'Data tidak ditemukan','result' => []]);
@@ -84,6 +111,10 @@ class PersonController extends Controller
     public function destroy($id)
     {
         if($person = Person::where('id',$id)->first()){
+            $userController = new UserController();
+            if($user = User::where('people_id',$person->id)->first()){
+                $userController->deleteByEmployee($user->id);
+            }
             $person->delete();
             return response()->json(['status'=>'1','msg'=>'Data berhasil dihapus']);
         };

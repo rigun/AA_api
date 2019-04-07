@@ -53,9 +53,9 @@ class EmployeeController extends Controller
             'salary' => 'required',
         ]);
 
-        if($employee = Employee::where('id',$id)->first()){
+        if($employee = Employee::where('people_id',$id)->first()){
             $personController = new PersonController();
-            $personController->update($request,$employee->people_id);
+            $personController->update($request,$id);
             $employee->salary = $request->salary;
             $employee->save();
             return response()->json(['status'=>'1','msg'=>'Data berhasil dimasukkan','result' => $employee->detail()->first()]);                
@@ -70,6 +70,7 @@ class EmployeeController extends Controller
         if($employee = Employee::where('id',$id)->first()){
             $personController = new PersonController();
             $personController->destroy($employee->people_id);
+            $employee->delete();
             return response()->json(['status'=>'1','msg'=>'Data berhasil dihapus']);                
         }else{
             return response()->json(['status'=>'0','msg'=>'Data berhasil dihapus']);                

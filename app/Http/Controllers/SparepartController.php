@@ -70,6 +70,15 @@ class SparepartController extends Controller
             $item->merk = $request->merk;
             $item->type = $request->type;
             $item->supplier_id = $request->supplier_id;
+            if($request->changeImg == 1){
+                $image = $request->picture;  // your base64 encoded
+                $image = str_replace('data:image/png;base64,', '', $image);
+                $image = str_replace(' ', '+', $image);
+                $name = sha1(date('YmdHis') . str_random(30));
+                $save_name = $name .'.'.'png';
+                \File::put($this->photos_path.'/'. $save_name, base64_decode($image));
+                $item->picture = $save_name;
+            }
             $item->save();    
             $item->vehicle()->sync($request->vehicles);
             return response()->json(['status'=>'1','msg'=>'Sparepart berhasil diubah menjadi '.$item->name,'result' => $item]);
@@ -102,15 +111,47 @@ class SparepartController extends Controller
             'sparepart_code' => 'required',
             'branch_id' => 'required',
             'position' => 'required',
-            'limitstock' => 'required'
+            'limitstock' => 'required',
+            'sell' => 'required',
+            'buy' => 'required',
+            'stock' => 'required'
         ]);
         $item = new SparepartBranch();
         $item->sparepart_code = $request->sparepart_code;
         $item->branch_id = $request->branch_id;
         $item->position = $request->position;
         $item->limitstock = $request->limitstock;
+        $item->sell = $request->sell;
+        $item->buy = $request->buy;
+        $item->stock = $request->stock;
         $item->save();
             
         return response()->json(['status'=>'1','msg'=>'Sparepart '.$item->name.' berhasil dibuat','result' => $item]);
+    }
+    public function updateSpBranch(Request $request, $id){
+        $this->validateWith([
+            'sparepart_code' => 'required',
+            'position' => 'required',
+            'limitstock' => 'required',
+            'sell' => 'required',
+            'buy' => 'required',
+            'stock' => 'required'
+        ]);
+        $item = SparepartBranch::where('id', $id)->first();
+        $item->sparepart_code = $request->sparepart_code;
+        $item->position = $request->position;
+        $item->limitstock = $request->limitstock;
+        $item->sell = $request->sell;
+        $item->buy = $request->buy;
+        $item->stock = $request->stock;
+        $item->save();
+            
+        return response()->json(['status'=>'1','msg'=>'Sparepart '.$item->name.' berhasil dibuat','result' => $item]);
+    }
+    public function destroyByBranch($id){
+        $item = SparepartBranch::where('id', $id)->first();
+        $item->delete();
+            
+        return 'Data berhasil dihapus';
     }
 }
