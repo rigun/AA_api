@@ -3,83 +3,60 @@
 namespace App\Http\Controllers;
 
 use App\TransactionDetail;
+use App\Transaction;
+use App\VehicleCustomer;
+use App\Person;
 use Illuminate\Http\Request;
 
 class TransactionDetailController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    public function getCustomer($id){
+        $transaction = Transaction::find($id);
+        return Person::find($transaction->customer_id);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function showByTransaction($transactionId){
+        return TransactionDetail::where('transaction_id',$transactionId)->with('vehicleCustomer')->get();
     }
+    public function update(Request $request,$vehiclecustomerid){
+        $this->validateWith([
+            'licensePlate' => 'required',
+            'vehicle_id' => 'required'
+        ]);
+        $vehicleCustomer = VehicleCustomer::find($vehiclecustomerid);
+        $vehicleCustomer->licensePlate = $request->licensePlate;
+        $vehicleCustomer->vehicle_id = $request->vehicle_id;
+        $vehicleCustomer->save();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+        return response()->json(['status'=>'1','msg'=>'Data berhasil dimasukkan','result' => $vehicleCustomer->first()]);                
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\TransactionDetail  $transactionDetail
-     * @return \Illuminate\Http\Response
-     */
-    public function show(TransactionDetail $transactionDetail)
-    {
-        //
+    public function destroy($transactionDetailId){
+        $dt = TransactionDetail::find($transactionDetailId);
+        $dt->delete();
+        return 'Berhasil';
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\TransactionDetail  $transactionDetail
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(TransactionDetail $transactionDetail)
-    {
-        //
+    public function myvehicle($transactionDetailId){
+        $dt = TransactionDetail::find($transactionDetailId);
+        return $dt->vehicleCustomer()->first();
     }
+    public function store(Request $request){
+        $this->validateWith([
+            'licensePlate' => 'required',
+            'vehicle_id' => 'required',
+            'transaction_id' => 'required'
+        ]);
+        $transaction = Transaction::find($request->transaction_id);
+        $vehicleCustomer = new VehicleCustomer();
+        $vehicleCustomer->licensePlate = $request->licensePlate;
+        $vehicleCustomer->vehicle_id = $request->vehicle_id;
+        $vehicleCustomer->customer_id = $transaction->customer_id;
+        $vehicleCustomer->save();
+        
+        $detailTransaction = new TransactionDetail();
+        $detailTransaction->transaction_id = $transaction->id;
+        $detailTransaction->vehicleCustomer_id = $vehicleCustomer->id;
+        $detailTransaction->montir_id = $request->montir_id;
+        $detailTransaction->save();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TransactionDetail  $transactionDetail
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, TransactionDetail $transactionDetail)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\TransactionDetail  $transactionDetail
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(TransactionDetail $transactionDetail)
-    {
-        //
+        return response()->json(['status'=>'1','msg'=>'Data berhasil dimasukkan','result' => $transaction->first()]);                
     }
 }

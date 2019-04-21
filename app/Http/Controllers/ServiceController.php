@@ -11,7 +11,9 @@ class ServiceController extends Controller
     {
         return Service::all();
     }
-
+    public function getPrice($id){
+        return Service::find($id)->price;
+    }
     public function store(Request $request){
         $this->validateWith([
             'name' => 'required',

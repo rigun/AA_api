@@ -11,6 +11,21 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserController extends Controller
 {
+    public function getPeopleId(){
+        return JWTAuth::parseToken()->authenticate()->people_id;
+    }
+    public function dashboard(){
+        $vehicle = new VehicleController();
+        $person = new PersonController();
+        $employee = new EmployeeController();
+
+        $totalVehicle = $vehicle->totalData();
+        $totalSupplier = $person->totalData('supplier');
+        $totalEmployee = $employee->totalData();
+        $totalCustomer = $person->totalData('konsumen');
+
+        return response()->json(['kendaraan' => $totalVehicle, 'supplier' => $totalSupplier, 'pegawai' => $totalEmployee, 'konsumen' => $totalCustomer]);
+    }
     public function updatePassword(Request $request, $id)
     {
         $this->validateWith([

@@ -10,7 +10,14 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    
+    public $id;
+
+    public function getId(){
+        return $this->id;
+    }
+    public function totalData(){
+        return Employee::count();
+    }
     public function index()
     {
         return Employee::with(['detail','branch'])->orderBy('created_at','desc')->get();
@@ -18,6 +25,16 @@ class EmployeeController extends Controller
     public function showByBranch($branch_id)
     {
         return Employee::where('branch_id',$branch_id)->with(['detail'])->orderBy('created_at','desc')->get();
+    }
+    public function showMontirByBranch($branch_id)
+    {
+        $emp = Employee::where('branch_id',$branch_id)->with(['detail'])->orderBy('created_at','desc')->get();
+        foreach($emp as $e){
+            if($e->detail()->first()->role_id === 4){
+                $temp[] = $e;
+            }
+        }
+        return $temp;
     }
     public function show($id)
     {

@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
+    public function totalData(){
+        return Vehicle::count();
+    }
     public function index()
     {
         return Vehicle::all();

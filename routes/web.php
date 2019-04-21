@@ -20,8 +20,10 @@ header('Access-Control-Allow-Methods: GET, PATCH, POST, DELETE');
 Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/user', 'UserController@getAuthenticatedUser');
     Route::get('/', 'UserController@index');
+    Route::get('/dashboard', 'UserController@dashboard');
     Route::post('/changepassword/{id}', 'UserController@updatePassword');
-
+    
+    Route::get('/cekPhoneNumber/{phoneNumber}','PersonController@cekPhoneNumber');
     Route::get('/person', 'PersonController@index');
     Route::get('/person/{id}', 'PersonController@searchById');
     Route::get('/personbyrole/{role}', 'PersonController@show');
@@ -46,6 +48,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/service','ServiceController@store');
     Route::post('/service/{id}','ServiceController@update');
     Route::delete('/service/{id}','ServiceController@destroy');
+
 
     Route::get('/sparepart','SparepartController@index');
     Route::get('/sparepartBySupplier/{supplierId}','SparepartController@showBySupplier');
@@ -74,7 +77,35 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/employee','EmployeeController@store');
     Route::post('/employee/{id}','EmployeeController@update');
     Route::delete('/employee/{id}','EmployeeController@destroy');
+    Route::get('/montir/{branch_id}','EmployeeController@showMontirByBranch');
+
+    Route::get('/transaction','TransactionController@index');
+    Route::get('/transactionByBranch/{branch_id}','TransactionController@showByBranch');
+    Route::post('/transaction','TransactionController@store');
+    Route::delete('/transaction/{id}','TransactionController@destroy');
+
+    
+    Route::get('/customer/{transactionId}','TransactionDetailController@getCustomer');
+    Route::get('/detailTransaction/{transactionId}','TransactionDetailController@showByTransaction');
+    Route::post('/detailTransaction','TransactionDetailController@store');
+    Route::post('/detailTransaction/{vehiclecustomerid}','TransactionDetailController@update');
+    Route::delete('/detailTransaction/{transactionDetailId}','TransactionDetailController@destroy');
+
+    Route::get('/myvehicle/{transactionDetailId}','TransactionDetailController@myvehicle');
+
+    Route::get('/detailTSp/{transactionDetailId}/{branchId}','TransactionDetailSparepartController@showByTransactionDetail');
+    Route::post('/detailTSp','TransactionDetailSparepartController@store');
+    Route::post('/detailTSp/{tspId}','TransactionDetailSparepartController@update');
+    Route::delete('/detailTSp/{tspId}','TransactionDetailSparepartController@destroy');
+
+    Route::get('/detailTSv/{transactionDetailId}','TransactiondetailServiceController@showByTransactionDetail');
+    Route::post('/detailTSv','TransactiondetailServiceController@store');
+    Route::post('/detailTSv/{tspId}','TransactiondetailServiceController@update');
+    Route::delete('/detailTSv/{tspId}','TransactiondetailServiceController@destroy');
+    Route::post('/spk/{idTransaction}','TransactionController@spkExport');
+
 });
+
 Route::get('/service','ServiceController@index');
 Route::get('/cities', 'UserController@city');
 

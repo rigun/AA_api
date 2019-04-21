@@ -7,79 +7,38 @@ use Illuminate\Http\Request;
 
 class TransactiondetailServiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    public function showByTransactionDetail($transactionDetailId){
+        return TransactiondetailService::where('trasanctiondetail_id',$transactionDetailId)->with('service')->get();
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function store(Request $request){
+        $this->validateWith([
+            'trasanctiondetail_id' => 'required',
+            'service_id' => 'required',
+            'total' => 'required'
+        ]);
+        $ts = new TransactiondetailService();
+        $ts->trasanctiondetail_id = $request->trasanctiondetail_id;
+        $ts->service_id = $request->service_id;
+        $serviceController = new ServiceController();
+        $ts->total = $request->total;
+        $ts->price =$serviceController->getPrice($request->service_id);
+        $ts->save();
+        return 'Berhasil';
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function update(Request $request, $tspId){
+        $this->validateWith([
+            'service_id' => 'required',
+            'total' => 'required'
+        ]);
+        $ts = TransactiondetailService::find($tspId);
+        $ts->service_id = $request->service_id;
+        $ts->total = $request->total;
+        $ts->save();
+        return 'Berhasil';
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\TransactiondetailService  $transactiondetailService
-     * @return \Illuminate\Http\Response
-     */
-    public function show(TransactiondetailService $transactiondetailService)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\TransactiondetailService  $transactiondetailService
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(TransactiondetailService $transactiondetailService)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TransactiondetailService  $transactiondetailService
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, TransactiondetailService $transactiondetailService)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\TransactiondetailService  $transactiondetailService
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(TransactiondetailService $transactiondetailService)
-    {
-        //
+    public function destroy($tspId){
+        $ts = TransactiondetailService::find($tspId);
+        $ts->delete();
+        return 'Berhasil';
     }
 }

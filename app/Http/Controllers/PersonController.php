@@ -10,7 +10,17 @@ use App\Http\Controllers\UserController;
 
 class PersonController extends Controller
 {
-    
+    public $id;
+
+    public function cekPhoneNumber($phoneNumber){
+        if(!$person = Person::where('phoneNumber',$phoneNumber)->first()){
+            $person = 0;
+        }
+        return $person;
+    }
+    public function getId(){
+        return $this->id;
+    }   
     public function index()
     {
         return Person::all();
@@ -22,6 +32,12 @@ class PersonController extends Controller
         }
         return response()->json(['status'=>'0','msg'=>'Role tidak ditemukan','result' => []]);
 
+    }
+    public function totalData($role){
+        if($r = Role::where('name',$role)->first()){
+            return Person::where('role_id',$r->id)->count();
+        }
+        return -1;
     }
     public function searchById($id){
         if($person = Person::where('id',$id)->first()){
@@ -56,6 +72,7 @@ class PersonController extends Controller
             $person->city = $request->city;
             $person->role_id = $r->id;
             $person->save();
+            $this->id = $person->id;
             if($r->name == 'cs' || $r->name == 'kasir' || $r->name == 'owner'){
                 $userController = new UserController();
                 $userController->storeByEmployee($request,$person->id);    

@@ -16,6 +16,12 @@ class SparepartController extends Controller
         $this->photos_path = public_path('/images/sparepart');
 
     }
+    public function getPrice($code,$id){
+        return SparepartBranch::where([['sparepart_code',$code],['branch_id',$id]])->first()->sell;
+    }
+    public function getPosition($code,$id){
+        return SparepartBranch::where([['sparepart_code',$code],['branch_id',$id]])->first()->position;
+    }
     public function index()
     {
         return Sparepart::all();
