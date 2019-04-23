@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Sparepart;
 use App\SparepartBranch;
 use App\VehicleSparepart;
+use App\Order;
+use App\OrderDetail;
 use Illuminate\Http\Request;
 
 class SparepartController extends Controller
@@ -15,6 +17,21 @@ class SparepartController extends Controller
     {
         $this->photos_path = public_path('/images/sparepart');
 
+    }
+    public function showSupplierOfBranch($branch_id){
+        $sp = SparepartBranch::where('branch_id',$branch_id)->get();
+        $supplier = [];
+        foreach($sp as $s){
+            $supplier[] = Sparepart::where('code',$s->sparepart_code)->first()->supplier()->first();
+        }
+        $array = array_values( array_unique( $supplier, SORT_REGULAR ) );
+        $result = json_encode( $array );
+        return $result;
+    }
+    public function decreaseStock($sparepart_code,$total,$branch_id){
+        $sp = SparepartBranch::where([['sparepart_code',$sparepart_code],['branch_id',$branch_id]])->first();
+        $sp->stock = $sp->stock - $total;
+        $sp->save();
     }
     public function getPrice($code,$id){
         return SparepartBranch::where([['sparepart_code',$code],['branch_id',$id]])->first()->sell;
@@ -111,6 +128,32 @@ class SparepartController extends Controller
 
     public function showByBranch($branchId){
         return SparepartBranch::where('branch_id',$branchId)->with('sparepart')->get();
+    }
+    public function showByBranchSupplier($supplierId,$branchId){
+        $sparepart = Sparepart::where('supplier_id',$supplierId)->get();
+        $data = [];
+        $tempData = [];
+        foreach($sparepart as $s){
+            if($sparepartBranch = SparepartBranch::where([['branch_id',$branchId],['sparepart_code',$s->code]])->with('sparepart')->first()){
+                $data[] = $sparepartBranch;
+            }
+        }
+        if($order = Order::where([['supplier_id',$supplierId],['branch_id',$branchId],['status',0]])->first()){
+            foreach($data as $key => $d){
+                $tempData[$key]['data'] = $d;
+                if($od = OrderDetail::where([['order_id',$order->id],['sparepart_code',$d->sparepart_code]])->first()){
+                    $tempData[$key]['total'] = $od->total;
+                }else{
+                    $tempData[$key]['total'] = 0;
+                }
+            }
+        }else{
+            foreach($data as $key => $d){
+                $tempData[$key]['data'] = $d;
+                $tempData[$key]['total'] = 0;
+            }
+        }
+        return $tempData;
     }
     public function storeToBranch(Request $request){
         $this->validateWith([

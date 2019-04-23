@@ -10,6 +10,9 @@ class TransactionDetail extends Model
     public function vehicleCustomer(){
         return $this->hasOne('App\VehicleCustomer','id','vehicleCustomer_id')->with('vehicle');
     }
+    public function montir(){
+        return $this->belongsTo('App\Person','montir_id','id');
+    }
     public function detailTransactionSparepart(){
         return $this->hasMany('App\TransactiondetailSparepart','trasanctiondetail_id','id')->with('sparepart');
     }

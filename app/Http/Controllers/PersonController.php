@@ -31,7 +31,6 @@ class PersonController extends Controller
             return response()->json(['status'=>'1','msg'=>'Data berhasil ditemukan','result' => Person::where('role_id',$r->id)->get()]);
         }
         return response()->json(['status'=>'0','msg'=>'Role tidak ditemukan','result' => []]);
-
     }
     public function totalData($role){
         if($r = Role::where('name',$role)->first()){

@@ -11,6 +11,7 @@ class TransactiondetailSparepartController extends Controller
     public function showByTransactionDetail($transactionDetailId,$branchId){
         $ts = TransactiondetailSparepart::where('trasanctiondetail_id',$transactionDetailId)->with('sparepart')->get();
         $sparepartController = new SparepartController();
+        $try = [];
         foreach($ts as $key => $t){
             $try[$key]['data'] = $t;
             $try[$key]['position'] = $sparepartController->getPosition($t->sparepart_code,$branchId);

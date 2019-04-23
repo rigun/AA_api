@@ -13,4 +13,7 @@ class Sparepart extends Model
     public function vehicle(){
         return $this->belongsToMany('App\Vehicle','vehicle_spareparts','sparepart_code','vehicle_id');
     }
+    public function supplier(){
+        return $this->belongsTo('App\Person','supplier_id','id');
+    }
 }

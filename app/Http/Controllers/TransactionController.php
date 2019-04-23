@@ -6,22 +6,9 @@ use App\Transaction;
 use App\Branch;
 use App\Person;
 use Illuminate\Http\Request;
-use PDF;
 
 class TransactionController extends Controller
 {
-    public function spkExport(Request $request, $id){
-        $this->validateWith([
-            'montir_id' => 'required',
-        ]);
-        $transaction = Transaction::where('id',$id)->with(['detailTransaction','customer'])->first();
-        $transaction->detailTransaction()->first()->montir_id = $request->montir_id;
-        $transaction->save();
-        view()->share(['data' => $transaction]);
-        $pdf = PDF::loadView('exports.spk');
-        $pdf->setPaper([0, 0, 450, 735])->save(public_path('/files/spk').'/'.$transaction->transactionNumber.'-'.$transaction->id.'.pdf');
-        return $pdf->download($transaction->transactionNumber.'-'.$transaction->id.'.pdf');
-    }
     public function destroy($id){
         $transaction = Transaction::find($id);
         $transaction->delete();
@@ -29,6 +16,20 @@ class TransactionController extends Controller
     }
     public function showByBranch($branch_id){
         return Transaction::where('branch_id',$branch_id)->with('customer')->orderBy('created_at','desc')->get();
+    }
+    public function updateStatus(Request $request, $id){
+        
+        $this->validateWith([
+            'status' => 'required'
+        ]);
+        $t = Transaction::find($id);
+        if($request->status == 1){
+            $t->status = 2;
+        }else{
+            $t->status = 1;
+        }
+        $t->save();
+        return 'Berhasil';
     }
 
     public function store(Request $request){

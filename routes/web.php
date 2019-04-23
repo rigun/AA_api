@@ -82,6 +82,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/transaction','TransactionController@index');
     Route::get('/transactionByBranch/{branch_id}','TransactionController@showByBranch');
     Route::post('/transaction','TransactionController@store');
+    Route::patch('/transaction/status/{id}','TransactionController@updateStatus');
     Route::delete('/transaction/{id}','TransactionController@destroy');
 
     
@@ -102,9 +103,18 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/detailTSv','TransactiondetailServiceController@store');
     Route::post('/detailTSv/{tspId}','TransactiondetailServiceController@update');
     Route::delete('/detailTSv/{tspId}','TransactiondetailServiceController@destroy');
-    Route::post('/spk/{idTransaction}','TransactionController@spkExport');
-
+    Route::post('/spk/{idTransaction}/{idDetaiTransaction}','TransactionDetailController@spkExport');
+    Route::post('/notaLunas/{idTransaction}','TransactionDetailController@notaLunasExport');
+    // pemesanan
+    Route::get('/pemesanan/{branchId}','OrderController@showByBranch');
+    Route::delete('/pemesanan/{orderId}','OrderController@destroy');
+    Route::get('/supplierBranch/{branchId}','SparepartController@showSupplierOfBranch');
+    Route::get('/sparepartBS/{supplierId}/{branchId}','SparepartController@showByBranchSupplier');
+    Route::post('/order','OrderDetailController@store');
 });
+Route::get('/mytransaction/{transactionId}','TransactionDetailController@mytransaction');
+
+Route::get('/spk/{idTransaction}/{idDetaiTransaction}','TransactionDetailController@dataExport');
 
 Route::get('/service','ServiceController@index');
 Route::get('/cities', 'UserController@city');
