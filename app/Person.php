@@ -13,4 +13,7 @@ class Person extends Model
     public function user(){
         return $this->belongsTo('App\User','id','people_id');
     }
+    public function transaction(){
+        return $this->hasMany('App\Transaction','customer_id','id');
+    }
 }

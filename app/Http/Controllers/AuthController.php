@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Exception;
 class AuthController extends Controller
 {
+    private $branchId;
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login','register']]);
@@ -37,7 +39,11 @@ class AuthController extends Controller
       if (!$token = auth()->attempt($credentials)) {
         return response()->json(['error' => 'Unauthorized'], 401);
       }
-
+      try{
+        $this->branchId = auth()->user()->employee()->first()->branch_id;
+      }catch(Exception $e){
+        $this->branchId = -1;
+      }
       return $this->respondWithToken($token);
     }
 
@@ -49,7 +55,8 @@ class AuthController extends Controller
         'token_type' => 'bearer',
         'role' => auth()->user()->role()->first()->role->name,
         'status' => auth()->user()->status,
-        'id' => auth()->user()->id
+        'id' => auth()->user()->id,
+        'branch_id' => $this->branchId
       ]);
     }
     public function me()

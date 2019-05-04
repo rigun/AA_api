@@ -4,6 +4,8 @@ use Illuminate\Database\Seeder;
 use App\User;
 use App\Role;
 use App\Person;
+use App\Branch;
+use App\Employee;
 class UsersTableSeeder extends Seeder
 {
     /**
@@ -15,7 +17,10 @@ class UsersTableSeeder extends Seeder
     {
         $roles = ['owner','cs','kasir','montir','supplier','sales','konsumen'];
 
-        foreach($roles as $role){
+        $branch = new Branch();
+        $branch->name = "Babarsari";
+        $branch->save();
+        foreach($roles as $key => $role){
             $this->command->info('Creating Role '. strtoupper($role));
 
             $r = new Role();
@@ -25,9 +30,9 @@ class UsersTableSeeder extends Seeder
 
             $person = new Person();
             $person->name = $role;
-            $person->phoneNumber = $role;
+            $person->phoneNumber = $key;
             $person->address = 'address';
-            $person->city = 'city';
+            $person->city = 'Kota Yogyakarta';
             $person->role_id = $r->id;
             $person->save();
 
@@ -38,6 +43,13 @@ class UsersTableSeeder extends Seeder
                 $user->password = bcrypt('password');
                 $user->people_id = $person->id;
                 $user->save();
+            }
+            if($role != 'owner') {
+                $employee = new Employee();
+                $employee->salary = 3000000;
+                $employee->people_id = $person->id;
+                $employee->branch_id = $branch->id;
+                $employee->save();
             }
         }
     }

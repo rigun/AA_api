@@ -19,6 +19,10 @@ class CreateOrdersTable extends Migration
             $table->foreign('supplier_id')
                   ->references('id')->on('people')
                   ->onDelete('cascade');
+            $table->unsignedInteger('sales_id')->nullable();
+            $table->foreign('sales_id')
+                  ->references('id')->on('people')
+                  ->onDelete('cascade');
             $table->integer('status');
             $table->unsignedInteger('branch_id');
             $table->foreign('branch_id')

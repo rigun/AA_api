@@ -129,6 +129,9 @@ class SparepartController extends Controller
     public function showByBranch($branchId){
         return SparepartBranch::where('branch_id',$branchId)->with('sparepart')->get();
     }
+    public function sparepartLanding(){
+        return Sparepart::with('sparepartbranch')->get();
+    }
     public function showByBranchSupplier($supplierId,$branchId){
         $sparepart = Sparepart::where('supplier_id',$supplierId)->get();
         $data = [];

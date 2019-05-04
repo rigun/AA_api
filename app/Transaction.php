@@ -15,7 +15,13 @@ class Transaction extends Model
     public function cashier(){
         return $this->belongsTo('App\Person','cashier_id','id');
     }
+    public function branch(){
+        return $this->belongsTo('App\Branch','branch_id','id');
+    }
     public function detailTransaction(){
         return $this->hasMany('App\TransactionDetail','transaction_id','id')->with(['vehicleCustomer','montir']);
+    }
+    public function detail(){
+        return $this->hasMany('App\TransactionDetail','transaction_id','id')->with(['vehicleCustomer','montir','detailTransactionSparepart','detailTransactionService']);
     }
 }

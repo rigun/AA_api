@@ -57,7 +57,7 @@
                                         $j = $j + 1;
                                    }
                                    if ($j === sizeOf($unique)){
-                                     $unique[] = $dt;
+                                        $unique[] = $dt;
                                    }
                                  }
                                 ?>

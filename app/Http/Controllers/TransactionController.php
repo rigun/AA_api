@@ -14,6 +14,9 @@ class TransactionController extends Controller
         $transaction->delete();
         return 'Berhasil';
     }
+    public function index(){
+        return Transaction::where('status',3)->with(['customer','cashier','cs','branch','detail'])->orderBy('created_at','desc')->get();
+    }
     public function showByBranch($branch_id){
         return Transaction::where('branch_id',$branch_id)->with('customer')->orderBy('created_at','desc')->get();
     }
@@ -56,6 +59,19 @@ class TransactionController extends Controller
             return response()->json(['status'=>'1','msg'=>'Data berhasil dimasukkan','result' => $transaction->first()]);                
         };
         return response()->json(['status'=>'0','msg'=>'Cabang tidak ditemukan','result' => []]);
+    }
+    public function update(Request $request, $id){
+        $this->validateWith([
+            'jenisTransaksi' => 'required'
+        ]);
+
+        $personController = new PersonController();
+        $personController->update($request,$request->customerId);
+        
+        $transaction = Transaction::find($id);
+        $transaction->transactionNumber = $request->jenisTransaksi.'-'.date("dmy");
+        $transaction->save();
+        return response()->json(['status'=>'1','msg'=>'Data berhasil dimasukkan','result' => $transaction->first()]);                
     }
 
 }

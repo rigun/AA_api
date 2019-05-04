@@ -27,6 +27,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/person', 'PersonController@index');
     Route::get('/person/{id}', 'PersonController@searchById');
     Route::get('/personbyrole/{role}', 'PersonController@show');
+    Route::get('/konsumen', 'PersonController@konsumen');
     Route::post('/personbyrole/{role}', 'PersonController@store');
     Route::delete('/deleteperson/{id}', 'PersonController@destroy');
     Route::post('/updateperson/{id}', 'PersonController@update');
@@ -82,6 +83,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/transaction','TransactionController@index');
     Route::get('/transactionByBranch/{branch_id}','TransactionController@showByBranch');
     Route::post('/transaction','TransactionController@store');
+    Route::post('/updateTransaction/{idTransaction}','TransactionController@update');
     Route::patch('/transaction/status/{id}','TransactionController@updateStatus');
     Route::delete('/transaction/{id}','TransactionController@destroy');
 
@@ -107,12 +109,14 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/notaLunas/{idTransaction}','TransactionDetailController@notaLunasExport');
     // pemesanan
     Route::get('/pemesanan/{branchId}','OrderController@showByBranch');
-    Route::delete('/pemesanan/{orderId}','OrderController@destroy');
+    Route::delete('/sparepartBS/{supplierId}/{branchId}','OrderController@destroy');
     Route::get('/supplierBranch/{branchId}','SparepartController@showSupplierOfBranch');
     Route::get('/sparepartBS/{supplierId}/{branchId}','SparepartController@showByBranchSupplier');
     Route::post('/order','OrderDetailController@store');
+    Route::post('/cetakPemesanan','OrderDetailController@cetakPemesanan');
 });
 Route::get('/mytransaction/{transactionId}','TransactionDetailController@mytransaction');
+Route::get('/sparepartLanding','SparepartController@sparepartLanding');
 
 Route::get('/spk/{idTransaction}/{idDetaiTransaction}','TransactionDetailController@dataExport');
 

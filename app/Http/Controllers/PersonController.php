@@ -15,6 +15,8 @@ class PersonController extends Controller
     public function cekPhoneNumber($phoneNumber){
         if(!$person = Person::where('phoneNumber',$phoneNumber)->first()){
             $person = 0;
+        }else{
+            $this->id = $person->id;
         }
         return $person;
     }
@@ -29,6 +31,12 @@ class PersonController extends Controller
     public function show($role){
         if($r = Role::where('name',$role)->first()){
             return response()->json(['status'=>'1','msg'=>'Data berhasil ditemukan','result' => Person::where('role_id',$r->id)->get()]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Role tidak ditemukan','result' => []]);
+    }
+    public function konsumen(){
+        if($r = Role::where('name','konsumen')->first()){
+            return response()->json(['status'=>'1','msg'=>'Data berhasil ditemukan','result' => Person::where('role_id',$r->id)->with('transaction')->get()]);
         }
         return response()->json(['status'=>'0','msg'=>'Role tidak ditemukan','result' => []]);
     }

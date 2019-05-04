@@ -9,10 +9,10 @@ class OrderController extends Controller
 {
     public function showByBranch($branchId)
     {
-        return Order::where('branch_id',$branchId)->with('supplier')->get();
+        return Order::where('branch_id',$branchId)->with(['supplier','detail','sales'])->get();
     }
-    public function destroy($id){
-        if($item = Order::where('id',$id)->first()){
+    public function destroy($supplierId,$branchId){
+        if($item = Order::where([['supplier_id',$supplierId],['branch_id',$branchId],['status',0]])->first()){
             $item->delete();
             return response()->json(['status'=>'1','msg'=>'Order berhasil dihapus','result' => $item]);
         }

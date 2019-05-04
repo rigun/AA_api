@@ -18,11 +18,11 @@ class CreateSalesSuppliersTable extends Migration
             $table->foreign('sales_id')
                     ->references('id')->on('people')
                     ->onDelete('cascade');
-            $table->unsignedInteger('order_id');
-            $table->foreign('order_id')
-                    ->references('id')->on('orders')
+            $table->unsignedInteger('supplier_id');
+            $table->foreign('supplier_id')
+                    ->references('id')->on('people')
                     ->onDelete('cascade');
-            $table->primary(['sales_id','order_id']);
+            $table->primary(['sales_id','supplier_id']);
         });
     }
 
