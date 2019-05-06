@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Role;
 use App\User;
 use App\Http\Controllers\UserController;
-
+use App\SalesSupplier;
 class PersonController extends Controller
 {
     public $id;
@@ -28,6 +28,22 @@ class PersonController extends Controller
         return Person::all();
     }
 
+    public function sales($supplier_id){
+        $this->id = $supplier_id;
+        if($person = Person::whereHas('salesSupplier', function ($query) {
+                $query->where('supplier_id', $this->id);
+            })->get()){
+            return response()->json(['status'=>'1','msg'=>'Data berhasil ditemukan','result' => $person]);
+        }
+        return response()->json(['status'=>'0','msg'=>'Role tidak ditemukan','result' => []]);
+    }
+    public function salesStore(Request $request, $supplier_id){
+        $this->store($request,'sales');
+        $salesSupplier = new SalesSupplier();
+        $salesSupplier->sales_id = $this->id;
+        $salesSupplier->supplier_id = $supplier_id;
+        $salesSupplier->save();
+    }
     public function show($role){
         if($r = Role::where('name',$role)->first()){
             return response()->json(['status'=>'1','msg'=>'Data berhasil ditemukan','result' => Person::where('role_id',$r->id)->get()]);

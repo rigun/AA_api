@@ -32,6 +32,9 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::delete('/deleteperson/{id}', 'PersonController@destroy');
     Route::post('/updateperson/{id}', 'PersonController@update');
 
+    Route::get('/sales/{supplierId}', 'PersonController@sales');
+    Route::post('/sales/{supplierId}', 'PersonController@salesStore');
+
     Route::get('/branch','BranchController@index');
     Route::get('/branchEmployee/{id}','BranchController@employeeByBranch');
     Route::get('/branch/{id}','BranchController@show');
@@ -109,6 +112,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/notaLunas/{idTransaction}','TransactionDetailController@notaLunasExport');
     // pemesanan
     Route::get('/pemesanan/{branchId}','OrderController@showByBranch');
+    Route::get('/detailPemesanan/{orderId}','OrderController@show');
     Route::delete('/sparepartBS/{supplierId}/{branchId}','OrderController@destroy');
     Route::get('/supplierBranch/{branchId}','SparepartController@showSupplierOfBranch');
     Route::get('/sparepartBS/{supplierId}/{branchId}','SparepartController@showByBranchSupplier');

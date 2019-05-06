@@ -15,6 +15,7 @@ class TransactiondetailSparepartController extends Controller
         foreach($ts as $key => $t){
             $try[$key]['data'] = $t;
             $try[$key]['position'] = $sparepartController->getPosition($t->sparepart_code,$branchId);
+            $try[$key]['stock'] = $sparepartController->getStock($t->sparepart_code,$branchId);
         }
         return $try;
     }

@@ -39,6 +39,9 @@ class SparepartController extends Controller
     public function getPosition($code,$id){
         return SparepartBranch::where([['sparepart_code',$code],['branch_id',$id]])->first()->position;
     }
+    public function getStock($code,$id){
+        return SparepartBranch::where([['sparepart_code',$code],['branch_id',$id]])->first()->stock;
+    }
     public function index()
     {
         return Sparepart::all();

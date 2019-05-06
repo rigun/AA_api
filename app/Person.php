@@ -16,4 +16,7 @@ class Person extends Model
     public function transaction(){
         return $this->hasMany('App\Transaction','customer_id','id');
     }
+    public function salesSupplier(){
+        return $this->hasOne('App\SalesSupplier','sales_id','id');
+    }
 }

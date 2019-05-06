@@ -11,6 +11,10 @@ class OrderController extends Controller
     {
         return Order::where('branch_id',$branchId)->with(['supplier','detail','sales'])->get();
     }
+    public function show($orderId)
+    {
+        return Order::where('id',$orderId)->with(['supplier','detail','sales'])->first();
+    }
     public function destroy($supplierId,$branchId){
         if($item = Order::where([['supplier_id',$supplierId],['branch_id',$branchId],['status',0]])->first()){
             $item->delete();
