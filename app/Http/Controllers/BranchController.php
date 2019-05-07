@@ -10,7 +10,7 @@ class BranchController extends Controller
   
     public function index()
     {
-        return Branch::with(['employee','transaction','spareparts'])->get();
+        return Branch::withCount('employee','transaction','spareparts')->get();
     }
     public function employeeByBranch($id){
         return Branch::where('id',$id)->with('employee')->first();

@@ -12,4 +12,7 @@ class VehicleCustomer extends Model
     public function customer(){
         return $this->belongsTo('App\Person');
     }
+    public function detailTransaction(){
+        return $this->hasOne('App\TransactionDetail','vehicleCustomer_id','id')->with('detailTransactionService');
+    }
 }

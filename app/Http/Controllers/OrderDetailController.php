@@ -6,6 +6,7 @@ use App\OrderDetail;
 use App\Order;
 use Illuminate\Http\Request;
 use App\SalesSupplier;
+use App\SparepartBranch;
 use PDF;
 use App\Person;
 class OrderDetailController extends Controller
@@ -61,7 +62,7 @@ class OrderDetailController extends Controller
             $order->branch_id = $request->branch_id;
             $order->save();
         }
-
+        $sp = SparepartBranch::where([['branch_id',$request->branch_id],['sparepart_code',$request->sparepart_code]])->first();
         if(!$od = OrderDetail::where([['order_id',$order->id],['sparepart_code',$request->sparepart_code]])->first()){
             $od = new OrderDetail();
             $od->order_id = $order->id;
@@ -69,8 +70,30 @@ class OrderDetailController extends Controller
         $od->sparepart_code = $request->sparepart_code;
         $od->unit = $request->unit;
         $od->total = $request->total;
+        $od->totalAccept = $request->total;
+        $od->buy = $sp->buy;
         $od->save();
 
         return response()->json(['sparepart'=>$od]);
+    }
+    public function storetotalaccept(Request $request){
+        $this->validateWith([
+            'id' => 'required',
+            'totalAccept' => 'required',
+            'sell' => 'required',
+            'buy' => 'required',
+            'sparepart_branchId' => 'required'
+        ]);
+
+        $od = OrderDetail::find($request->id);
+        $od->totalAccept = $request->totalAccept;
+        $od->buy = $request->buy;
+        $od->save();
+
+        $sb = SparepartBranch::find($request->sparepart_branchId);
+        $sb->sell = $request->sell;
+        $sb->buy = $request->buy;
+        $sb->save();
+        return response()->json(['Berhasil']);
     }
 }

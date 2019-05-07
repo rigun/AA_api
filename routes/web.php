@@ -111,14 +111,21 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/spk/{idTransaction}/{idDetaiTransaction}','TransactionDetailController@spkExport');
     Route::post('/notaLunas/{idTransaction}','TransactionDetailController@notaLunasExport');
     // pemesanan
+    Route::get('/konfirmasiData/{orderId}','OrderController@konfirmasiData');
     Route::get('/pemesanan/{branchId}','OrderController@showByBranch');
     Route::get('/detailPemesanan/{orderId}','OrderController@show');
     Route::delete('/sparepartBS/{supplierId}/{branchId}','OrderController@destroy');
     Route::get('/supplierBranch/{branchId}','SparepartController@showSupplierOfBranch');
     Route::get('/sparepartBS/{supplierId}/{branchId}','SparepartController@showByBranchSupplier');
     Route::post('/order','OrderDetailController@store');
+    Route::post('/storetotalaccept','OrderDetailController@storetotalaccept');
     Route::post('/cetakPemesanan','OrderDetailController@cetakPemesanan');
 });
+Route::get('/sparepartTerlaris','ReportController@sparepartOfYear');
+Route::get('/pendapatanbulanan','ReportController@incomeOfMonth');
+Route::get('/pendapatantahunan','ReportController@incomeOfYear');
+Route::get('/pengeluaranbulanan','ReportController@outcomeOfMonth');
+Route::get('/penjualanJasa','ReportController@serviceReport');
 Route::get('/mytransaction/{transactionId}','TransactionDetailController@mytransaction');
 Route::get('/sparepartLanding','SparepartController@sparepartLanding');
 

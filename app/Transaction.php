@@ -24,4 +24,7 @@ class Transaction extends Model
     public function detail(){
         return $this->hasMany('App\TransactionDetail','transaction_id','id')->with(['vehicleCustomer','montir','detailTransactionSparepart','detailTransactionService']);
     }
+    public function detailSparepart(){
+        return $this->hasMany('App\TransactionDetail','transaction_id','id')->with(['detailTransactionSparepart']);
+    }
 }

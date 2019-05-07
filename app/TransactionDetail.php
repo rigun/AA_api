@@ -19,4 +19,7 @@ class TransactionDetail extends Model
     public function detailTransactionService(){
         return $this->hasMany('App\TransactiondetailService','trasanctiondetail_id','id')->with('service');
     }
+    public function transaction(){
+        return $this->belongsTo('App\Transaction','transaction_id','id');
+    }
 }

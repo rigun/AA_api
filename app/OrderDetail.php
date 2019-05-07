@@ -10,5 +10,7 @@ class OrderDetail extends Model
     public function sparepart(){
         return $this->hasOne('App\Sparepart','code','sparepart_code');
     }
-
+    public function data(){
+        return $this->hasOne('App\SparepartBranch','sparepart_code','sparepart_code')->with('sparepart');
+    }
 }
