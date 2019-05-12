@@ -13,6 +13,9 @@ class VehicleCustomer extends Model
         return $this->belongsTo('App\Person');
     }
     public function detailTransaction(){
-        return $this->hasOne('App\TransactionDetail','vehicleCustomer_id','id')->with('detailTransactionService');
+        return $this->hasMany('App\TransactionDetail','vehicleCustomer_id','id')->with('detailTransactionService');
+    }
+    public function detail(){
+        return $this->hasMany('App\TransactionDetail','vehicleCustomer_id','id')->with('detailTransactionService');
     }
 }

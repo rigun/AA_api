@@ -54,7 +54,14 @@ class VehicleController extends Controller
         }
         return response()->json(['status'=>'0','msg'=>'Kendaraan tidak ditemukan','result' => []]);
     }
-
+    public function myVehicle($idCustomer){
+        try{
+            $data = VehicleCustomer::where('customer_id', $idCustomer)->with('vehicle')->get();
+        }catch(\Exception $e){
+            $data = [];
+        }
+        return response()->json($data);
+    }
     public function vehicleCustomer(Request $request){
         $this->validateWith([
             'licensePlate' => 'required',

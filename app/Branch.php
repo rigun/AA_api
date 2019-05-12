@@ -12,6 +12,9 @@ class Branch extends Model
     public function transaction(){
         return $this->hasMany('App\Transaction');
     }
+    public function transactionSuccess(){
+        return $this->hasMany('App\Transaction')->where('status','3');
+    }
     public function spareparts(){
         return $this->hasMany('App\SparepartBranch');
     }

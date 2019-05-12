@@ -17,7 +17,7 @@ class TransactiondetailSparepartController extends Controller
             $try[$key]['position'] = $sparepartController->getPosition($t->sparepart_code,$branchId);
             $try[$key]['stock'] = $sparepartController->getStock($t->sparepart_code,$branchId);
         }
-        return $try;
+        return response()->json($try);
     }
     public function store(Request $request){
         $this->validateWith([
@@ -33,7 +33,7 @@ class TransactiondetailSparepartController extends Controller
         $ts->total = $request->total;
         $ts->price =$sparepartController->getPrice($request->sparepart_code,$request->branch_id);
         $ts->save();
-        return 'Berhasil';
+        return response()->json(['msg'=>'Berhasil']);
     }
     public function update(Request $request, $tspId){
         $this->validateWith([
@@ -44,11 +44,11 @@ class TransactiondetailSparepartController extends Controller
         $ts->sparepart_code = $request->sparepart_code;
         $ts->total = $request->total;
         $ts->save();
-        return 'Berhasil';
+        return response()->json(['msg'=>'Berhasil']);
     }
     public function destroy($tspId){
         $ts = TransactiondetailSparepart::find($tspId);
         $ts->delete();
-        return 'Berhasil';
+        return response()->json(['msg'=>'Berhasil']);
     }
 }

@@ -120,11 +120,17 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/order','OrderDetailController@store');
     Route::post('/storetotalaccept','OrderDetailController@storetotalaccept');
     Route::post('/cetakPemesanan','OrderDetailController@cetakPemesanan');
+    // support Customer
+    Route::get('/myVehicle/{idCustomer}','VehicleController@myVehicle');
 });
 Route::get('/sparepartTerlaris','ReportController@sparepartOfYear');
+Route::get('/sparepartTerlaris/data','ReportController@sparepartOfYearData');
 Route::get('/pendapatanbulanan','ReportController@incomeOfMonth');
+Route::get('/pendapatanbulanan/data','ReportController@incomeOfMonthData');
 Route::get('/pendapatantahunan','ReportController@incomeOfYear');
+Route::get('/pendapatantahunan/data','ReportController@incomeOfYearData');
 Route::get('/pengeluaranbulanan','ReportController@outcomeOfMonth');
+Route::get('/pengeluaranbulanan/data','ReportController@outcomeOfMonthData');
 Route::get('/penjualanJasa','ReportController@serviceReport');
 Route::get('/mytransaction/{transactionId}','TransactionDetailController@mytransaction');
 Route::get('/sparepartLanding','SparepartController@sparepartLanding');
@@ -142,3 +148,6 @@ Route::group([
     // Route::post('/register', 'AuthController@register');
     Route::post('/logout', 'AuthController@logout');
 });
+// Route::get('/try',function(){
+//     return view('reports.charts');
+// });

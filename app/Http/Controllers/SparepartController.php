@@ -132,6 +132,15 @@ class SparepartController extends Controller
     public function showByBranch($branchId){
         return SparepartBranch::where('branch_id',$branchId)->with('sparepart')->get();
     }
+    public function showByBranchCustomer($branchId,$idDetail){
+        $detail = \App\TransactionDetail::find($idDetail)->vehicleCustomer()->first();
+        $vehicle_id = $detail->vehicle->id;
+        return SparepartBranch::where('branch_id',$branchId)->with(['sparepart'=>function($query) use($vehicle_id){
+            $query->with(['vehicle' => function($query2) use($vehicle_id) {
+                $query2->where('id',$vehicle_id);
+            }]);
+        }])->get();
+    }
     public function sparepartLanding(){
         return Sparepart::with('sparepartbranch')->get();
     }
@@ -180,6 +189,9 @@ class SparepartController extends Controller
         $item->buy = $request->buy;
         $item->stock = $request->stock;
         $item->save();
+
+        $log = new LogController();
+        $log->store($request,'init');
             
         return response()->json(['status'=>'1','msg'=>'Sparepart '.$item->name.' berhasil dibuat','result' => $item]);
     }

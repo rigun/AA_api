@@ -161,11 +161,13 @@ class TransactionDetailController extends Controller
             'transaction_id' => 'required'
         ]);
         $transaction = Transaction::find($request->transaction_id);
-        $vehicleCustomer = new VehicleCustomer();
-        $vehicleCustomer->licensePlate = $request->licensePlate;
-        $vehicleCustomer->vehicle_id = $request->vehicle_id;
-        $vehicleCustomer->customer_id = $transaction->customer_id;
-        $vehicleCustomer->save();
+        if (!$vehicleCustomer = VehicleCustomer::where([['licensePlate',$request->licensePlate],['customer_id',$transaction->customer_id]])->first()){
+            $vehicleCustomer = new VehicleCustomer();
+            $vehicleCustomer->licensePlate = $request->licensePlate;
+            $vehicleCustomer->vehicle_id = $request->vehicle_id;
+            $vehicleCustomer->customer_id = $transaction->customer_id;
+            $vehicleCustomer->save();
+        }
         
         $detailTransaction = new TransactionDetail();
         $detailTransaction->transaction_id = $transaction->id;
