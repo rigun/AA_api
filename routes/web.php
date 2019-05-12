@@ -57,6 +57,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/sparepart','SparepartController@index');
     Route::get('/sparepartBySupplier/{supplierId}','SparepartController@showBySupplier');
     Route::get('/sparepartBranch/{branchId}','SparepartController@showByBranch');
+    Route::get('/sparepartBranch/{branchId}/{idDetail}','SparepartController@showByBranchCustomer');
     Route::post('/sparepartBranch','SparepartController@storeToBranch');
     Route::patch('/sparepartBranch/{spBrID}','SparepartController@updateSpBranch');
     Route::delete('/sparepartBranch/{spBrID}','SparepartController@destroyByBranch');
@@ -99,10 +100,10 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
     Route::get('/myvehicle/{transactionDetailId}','TransactionDetailController@myvehicle');
 
-    Route::get('/detailTSp/{transactionDetailId}/{branchId}','TransactionDetailSparepartController@showByTransactionDetail');
-    Route::post('/detailTSp','TransactionDetailSparepartController@store');
-    Route::post('/detailTSp/{tspId}','TransactionDetailSparepartController@update');
-    Route::delete('/detailTSp/{tspId}','TransactionDetailSparepartController@destroy');
+    Route::get('/detailTSp/{transactionDetailId}/{branchId}','TransactiondetailSparepartController@showByTransactionDetail');
+    Route::post('/detailTSp','TransactiondetailSparepartController@store');
+    Route::post('/detailTSp/{tspId}','TransactiondetailSparepartController@update');
+    Route::delete('/detailTSp/{tspId}','TransactiondetailSparepartController@destroy');
 
     Route::get('/detailTSv/{transactionDetailId}','TransactiondetailServiceController@showByTransactionDetail');
     Route::post('/detailTSv','TransactiondetailServiceController@store');
