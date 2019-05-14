@@ -10,7 +10,7 @@ class OrderController extends Controller
 {
     public function showByBranch($branchId)
     {
-        return Order::where('branch_id',$branchId)->with(['supplier','detail','sales'])->get();
+        return Order::where('branch_id',$branchId)->with(['supplier','detail','sales'])->orderBy('status','ASC')->get();
     }
     public function show($orderId)
     {

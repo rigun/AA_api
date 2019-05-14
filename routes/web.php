@@ -124,6 +124,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     // support Customer
     Route::get('/myVehicle/{idCustomer}','VehicleController@myVehicle');
 });
+// Report
 Route::get('/sparepartTerlaris','ReportController@sparepartOfYear');
 Route::get('/sparepartTerlaris/data','ReportController@sparepartOfYearData');
 Route::get('/pendapatanbulanan','ReportController@incomeOfMonth');
@@ -133,11 +134,16 @@ Route::get('/pendapatantahunan/data','ReportController@incomeOfYearData');
 Route::get('/pengeluaranbulanan','ReportController@outcomeOfMonth');
 Route::get('/pengeluaranbulanan/data','ReportController@outcomeOfMonthData');
 Route::get('/penjualanJasa','ReportController@serviceReport');
-Route::get('/mytransaction/{transactionId}','TransactionDetailController@mytransaction');
-Route::get('/sparepartLanding','SparepartController@sparepartLanding');
-
+Route::get('/sisaStock/data','ReportController@leftOverStockData');
+// Report
+// Transaction
 Route::get('/spk/{idTransaction}/{idDetaiTransaction}','TransactionDetailController@dataExport');
+Route::get('/mytransaction/{transactionId}','TransactionDetailController@mytransaction');
 
+// customerSupport
+Route::post('/support/myTransaction','CustomerController@callBackMyTransaction');
+Route::get('/support/myTransaction/{cVehicleId}/{phoneNumber}','CustomerController@getMyTransaction');
+Route::get('/sparepartLanding','SparepartController@sparepartLanding');
 Route::get('/service','ServiceController@index');
 Route::get('/cities', 'UserController@city');
 

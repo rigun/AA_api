@@ -48,7 +48,7 @@
                 </tr>
                 @foreach($detail as $key => $dtsp)
                 <tr>
-                    <td>{{$key}}</td>
+                    <td>{{$key + 1}}</td>
                     <td>{{$dtsp->sparepart->name}}</td>
                     <td>{{$dtsp->sparepart->merk}}</td>
                     <td>{{$dtsp->sparepart->type}}</td>
@@ -60,7 +60,7 @@
             <table style="width: 100%; border: none">
             <tr style="border: none">
             <td style="width: 400px;border: none"></td>
-            <td style="width: 200px;border: none"> <p style="text-align: center">Hormat Kami <br> <br> <br> (Philips Purnomo)</p></td>
+            <td style="width: 200px;border: none"> <p style="text-align: right">Hormat Kami <br> <br> <br> (Philips Purnomo)</p></td>
             </tr>
             </table>
         </div>

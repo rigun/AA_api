@@ -43,6 +43,7 @@ class TransactionDetailController extends Controller
             'totalSpareparts' => 'required',
             'payment' => 'required'
         ]);
+        $done = 0;
         $t = Transaction::where('id',$idTransaction)->first();
         $t->diskon = $request->diskon;
         $t->totalServices = $request->totalServices;
@@ -51,7 +52,12 @@ class TransactionDetailController extends Controller
         $t->totalCost = $request->totalServices + $request->totalSpareparts;
         $userController = new UserController();
         $t->cashier_id = $userController->getPeopleId();
-        $t->status = 3;
+        if($t->status == 3){
+            $done = 1;
+        }else{
+            $done = 0;
+            $t->status = 3;
+        }
         $t->save();
         $transaction= Transaction::where('id',$idTransaction)->with(['customer','cs','cashier'])->first();
 
@@ -67,8 +73,9 @@ class TransactionDetailController extends Controller
                 $sparepart[$i]['data'] = $t;
                 $sparepart[$i]['position'] = $sparepartController->getPosition($t->sparepart_code,$transaction->branch_id);
                 $i++;
-                $sparepartController = new SparepartController();
-                $sparepartController->decreaseStock($t->sparepart_code,$t->total,$transaction->branch_id);
+                if($done == 0){
+                    $sparepartController->decreaseStock($t->sparepart_code,$t->total,$transaction->branch_id);
+                }
             }
             $sv = TransactiondetailService::where('trasanctiondetail_id',$dt->id)->with('service')->get(); 
             foreach($sv as $s){
@@ -131,7 +138,7 @@ class TransactionDetailController extends Controller
         return Person::find($transaction->customer_id);
     }
     public function showByTransaction($transactionId){
-        return TransactionDetail::where('transaction_id',$transactionId)->with('vehicleCustomer')->get();
+        return TransactionDetail::where('transaction_id',$transactionId)->with(['vehicleCustomer','montir'])->get();
     }
     public function update(Request $request,$vehiclecustomerid){
         $this->validateWith([

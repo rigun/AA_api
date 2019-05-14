@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Transaction;
+use App\TransactiondetailSparepart;
+use App\TransactiondetailService;
 use App\Branch;
 use App\Person;
 use Illuminate\Http\Request;
@@ -71,6 +73,25 @@ class TransactionController extends Controller
         $transaction = Transaction::find($id);
         $transaction->transactionNumber = $request->jenisTransaksi.'-'.date("dmy");
         $transaction->save();
+        if($request->jenisTransaksi != 'SS'){
+            $detail = $transaction->detail()->get();
+            foreach($detail as $dt){
+                if($request->jenisTransaksi == 'SV'){
+                    $dtsp = TransactiondetailSparepart::where('trasanctiondetail_id',$dt->id)->get();
+                    foreach($dtsp as $dsp){
+                        $dsp->delete();
+                    }
+                }else{
+                    $dtsv = TransactiondetailService::where('trasanctiondetail_id',$dt->id)->get();
+                    foreach($dtsv as $dsv){
+                        $dsv->delete();
+                    }
+                }
+                $dt->montir_id = null;
+                $dt->save();
+            }
+        }
+
         return response()->json(['status'=>'1','msg'=>'Data berhasil dimasukkan','result' => $transaction->first()]);                
     }
 

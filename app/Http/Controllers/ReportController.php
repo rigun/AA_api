@@ -300,17 +300,40 @@ class ReportController extends Controller
       foreach($datasets as $dt){
         $temp[$dt->vehicle->id]['vehicle']['merk'] = $dt->vehicle->merk;
         $temp[$dt->vehicle->id]['vehicle']['type'] = $dt->vehicle->type;
-        foreach($dt->detailTransaction->detailTransactionService as $dts){
-          $temp[$dt->vehicle->id]['detail'][$dts->service->id]['name'] = $dts->service->name;
-          try{
-            $temp[$dt->vehicle->id]['detail'][$dts->service->id]['total'] = $dts->total + $temp[$dt->vehicle->id]['detail'][$dts->service->id]['total'];
-          }catch (\Exception $e){
-            $temp[$dt->vehicle->id]['detail'][$dts->service->id]['total'] = $dts->total;
+        foreach($dt->detailTransaction as $dT){
+          foreach($dT->detailTransactionService as $dts){
+            $temp[$dt->vehicle->id]['detail'][$dts->service->id]['name'] = $dts->service->name;
+            try{
+              $temp[$dt->vehicle->id]['detail'][$dts->service->id]['total'] = $dts->total + $temp[$dt->vehicle->id]['detail'][$dts->service->id]['total'];
+            }catch (\Exception $e){
+              $temp[$dt->vehicle->id]['detail'][$dts->service->id]['total'] = $dts->total;
+            }
           }
         }
       }
       return $temp;
     }
-    public function leftOverStock($ItemId){
+    public function leftOverStockData(){
+      return DB::select('SELECT sum(sb.stock) FROM sparepart_branches sb JOIN spareparts s ON sb.sparepart_code = s.code WHERE s.type = "Roda" GROUP BY s.type');
+      return DB::select('SELECT ord.createMonth, 
+      (CASE
+        WHEN ISNULL(trx.totalTransaksi) THEN ord.totalPemesanan
+        ELSE ord.totalPemesanan - trx.totalTransaksi
+      END) Sisa FROM (
+        SELECT MONTH(o.created_at) createMonth, sum(od.totalAccept) totalPemesanan FROM orders o 
+      JOIN order_details od on od.order_id = o.id 
+      JOIN spareparts s on od.sparepart_code = s.code 
+      WHERE o.status = 2 AND s.type = "Roda"
+      GROUP BY MONTH(o.created_at)
+      ) ord LEFT JOIN (
+        SELECT sum(tds.total) totalTransaksi, sp.type, MONTH(t.created_at) createMonth
+      FROM transactions t 
+      join transaction_details td on td.transaction_id = t.id 
+      join transactiondetail_spareparts tds on tds.trasanctiondetail_id = td.id 
+      join spareparts sp on tds.sparepart_code = sp.code
+      WHERE YEAR(t.created_at) = YEAR(CURDATE()) AND t.status = 3 AND sp.type = "Roda"
+      GROUP BY MONTH(t.created_at)
+      ) trx ON ord.createMonth = trx.createMonth');
+
     }
 }

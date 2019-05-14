@@ -55,7 +55,11 @@ class OrderDetailController extends Controller
             'unit' => 'required',
             'total' => 'required'
         ]);
+        
         if(!$order = Order::where([['supplier_id',$request->supplier_id],['branch_id',$request->branch_id],['status',0]])->first()){
+            if($request->total == 0){
+                return;
+            }
             $order = new Order();
             $order->supplier_id = $request->supplier_id;
             $order->status = 0;
@@ -64,8 +68,18 @@ class OrderDetailController extends Controller
         }
         $sp = SparepartBranch::where([['branch_id',$request->branch_id],['sparepart_code',$request->sparepart_code]])->first();
         if(!$od = OrderDetail::where([['order_id',$order->id],['sparepart_code',$request->sparepart_code]])->first()){
+            if($request->total == 0){
+                return;
+            }
             $od = new OrderDetail();
             $od->order_id = $order->id;
+        }
+        if($request->total == 0){
+            $od->delete();
+            if(!OrderDetail::where('order_id',$order->id)->first()){
+                $order->delete();
+            }
+            return;
         }
         $od->sparepart_code = $request->sparepart_code;
         $od->unit = $request->unit;
