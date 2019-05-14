@@ -135,7 +135,7 @@ class TransactionDetailController extends Controller
     }
     public function getCustomer($id){
         $transaction = Transaction::find($id);
-        return Person::find($transaction->customer_id);
+        return response()->json(['status' => $transaction->status, 'customer' =>Person::find($transaction->customer_id)]);
     }
     public function showByTransaction($transactionId){
         return TransactionDetail::where('transaction_id',$transactionId)->with(['vehicleCustomer','montir'])->get();
@@ -159,7 +159,8 @@ class TransactionDetailController extends Controller
     }
     public function myvehicle($transactionDetailId){
         $dt = TransactionDetail::find($transactionDetailId);
-        return $dt->vehicleCustomer()->first();
+        $transaction = Transaction::find($dt->transaction_id);
+        return response()->json(['status'=>$transaction->status,'myvehicle'=>$dt->vehicleCustomer()->first()]);
     }
     public function store(Request $request){
         $this->validateWith([

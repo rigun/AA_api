@@ -20,53 +20,31 @@
                 </table>
             </div>
             <hr>
-            <h3 style="text-align:center">Laporan Penjualan Jasa</h3>
+            <h3 style="text-align:center">Laporan Sisa Stok</h3>
             <hr>
             <div class="detailTransactionUser">
             <?php
+            function money($nominal){
+               return number_format($nominal,2,",",".");
+            }
+            $priceTotal = 0; 
             $month = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
             ?>
-            <table style="border: none !important">
-            <tr  style="border: none !important">
-                <td  style="border: none !important">Tahun</td>
-                <td  style="border: none !important">:</td>
-                <td  style="border: none !important">{{$year}}</td>
-            </tr>
-            <tr  style="border: none !important">
-                <td  style="border: none !important">Bulan</td>
-                <td  style="border: none !important">:</td>
-                <td  style="border: none !important">{{$month[(int)$month - 1]}}</td>
-            </tr>
-            </table>
+                <p style="text-align:left">Tahun       : {{$year}}</p>
+                <p style="text-align:left">Type Barang : {{$type}}</p>
             </div>
-            <br>
             <table class="dataTable">
-                <tr class="rowTable">
+                <tr class="rowTable" style="text-align:center">
                     <th style="text-align:center">Nomor</th>
-                    <th style="text-align:center">Merk</th>
-                    <th style="text-align:center">Tipe Motor</th>
-                    <th style="text-align:center">Nama Service</th>
-                    <th style="text-align:center">Jumlah Penjualan</th>
+                    <th style="text-align:center">Bulan</th>
+                    <th style="text-align:center">Sisa Stok</th>
                 </tr>
-                    <?php $n = 1?>
                 @foreach($datasets as $key => $dt)
-                    <?php $i = 0?>
-                    @foreach($dt['detail'] as $key2 => $d)
-                    <tr>
-                        @if($i == 0)
-                        <td style="text-align:center" rowspan="{{sizeOf($dt['detail'])}}">{{$n}}</td>
-                        <td rowspan="{{sizeOf($dt['detail'])}}" style="text-align: center">{{$dt['vehicle']['merk']}}</td>
-                        <td rowspan="{{sizeOf($dt['detail'])}}" style="text-align: center">{{$dt['vehicle']['type']}}</td>
-                    <?php $n++?>
-
-                        @endif
-                        <td>{{$d['name']}}</td>
-                        <td style="text-align:right">{{$d['total']}}</td>
-                    <?php $i = 1?>
-
-                    </tr>
-                    @endforeach
-
+                <tr>
+                    <td style="text-align:center">{{$key+1}}</td>
+                    <td>{{$month[$dt->MONTH-1]}}</td>
+                    <td style="text-align:right">{{$dt->Sisa}}</td>
+                </tr>
                 @endforeach
             </table>
             <table style="width: 100%; border: none">
@@ -78,6 +56,7 @@
             </tr>
             </table>
         </div>
+        <img src="{{public_path('/images/charts/pengeluaranBulanan/').date('d-Y').'.png'}}" alt="" style="width: 650px">
         </div>
     </body>
     <style>

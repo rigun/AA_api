@@ -23,10 +23,10 @@
             <h3 style="text-align:center">Laporan Sparepart Terlaris</h3>
             <hr>
             <div class="detailTransactionUser">
-            <?php $tD = date("Y"); 
+            <?php
             $month = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
             ?>
-                <p style="text-align:left">Tahun : {{$tD}}</p>
+                <p style="text-align:left">Tahun : {{$year}}</p>
             </div>
             <table class="dataTable">
                 <tr class="rowTable">

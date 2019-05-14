@@ -122,19 +122,20 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/storetotalaccept','OrderDetailController@storetotalaccept');
     Route::post('/cetakPemesanan','OrderDetailController@cetakPemesanan');
     // support Customer
-    Route::get('/myVehicle/{idCustomer}','VehicleController@myVehicle');
+    Route::get('/support/myVehicle/{idCustomer}','VehicleController@myVehicle');
 });
 // Report
-Route::get('/sparepartTerlaris','ReportController@sparepartOfYear');
+Route::get('/sparepartTerlaris/report/{year}','ReportController@sparepartOfYear');
 Route::get('/sparepartTerlaris/data','ReportController@sparepartOfYearData');
-Route::get('/pendapatanbulanan','ReportController@incomeOfMonth');
+Route::get('/pendapatanbulanan/report/{year}','ReportController@incomeOfMonth');
 Route::get('/pendapatanbulanan/data','ReportController@incomeOfMonthData');
 Route::get('/pendapatantahunan','ReportController@incomeOfYear');
 Route::get('/pendapatantahunan/data','ReportController@incomeOfYearData');
-Route::get('/pengeluaranbulanan','ReportController@outcomeOfMonth');
+Route::get('/pengeluaranbulanan/report/{year}','ReportController@outcomeOfMonth');
 Route::get('/pengeluaranbulanan/data','ReportController@outcomeOfMonthData');
-Route::get('/penjualanJasa','ReportController@serviceReport');
+Route::get('/penjualanJasa/report/{year}/{month}','ReportController@serviceReport');
 Route::get('/sisaStock/data','ReportController@leftOverStockData');
+Route::get('/sisaStock/report/{year}/{type}','ReportController@leftOverStock');
 // Report
 // Transaction
 Route::get('/spk/{idTransaction}/{idDetaiTransaction}','TransactionDetailController@dataExport');

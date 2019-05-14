@@ -23,13 +23,13 @@ class ReportController extends Controller
     $this->photos_path = public_path('/images/charts');
     $this->monthsData =  ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Juni', 'Juli', 'Agust', 'Sep', 'Okt', 'Nov', 'Des'];
   }
-  public function sparepartOfYear(){
-    $detail = $this->sparepartOfYearData();
-    $pdf = PDF::loadView('reports.sparepartTerlaris',['detail'=>$detail]);
+  public function sparepartOfYear($year){
+    $detail = $this->sparepartOfYearData($year);
+    $pdf = PDF::loadView('reports.sparepartTerlaris',['detail'=>$detail, 'year'=>$year]);
     $pdf->setPaper([0, 0, 550, 900])->save(public_path('/files/report/sparepartTerlaris').'/'.date('d-Y').'.pdf');
     return $pdf->download(date('d-Y').'.pdf');
   }
-  public function sparepartOfYearData(){
+  public function sparepartOfYearData($year){
     return DB::select('SELECT * FROM
                         (
                           SELECT 1 AS MONTH
@@ -52,15 +52,15 @@ class ReportController extends Controller
                             join transaction_details td on td.transaction_id = t.id 
                             join transactiondetail_spareparts tds on tds.trasanctiondetail_id = td.id 
                             join spareparts sp on tds.sparepart_code = sp.code
-                            WHERE YEAR(t.created_at) = YEAR(CURDATE()) AND t.status = 3
+                            WHERE YEAR(t.created_at) = ? AND t.status = 3
                             GROUP BY MONTH(t.created_at), tds.sparepart_code 
                             ORDER BY sum(tds.total) DESC
                           ) n GROUP BY n.createMonth
-                        ) realCount ON months.MONTH = realCount.createMonth') ;
+                        ) realCount ON months.MONTH = realCount.createMonth', [$year]);
   }
     // LAPORAN PENDAPATAN BULANAN
-    public function incomeOfMonth(){
-      $datasets = $this->incomeOfMonthData();
+    public function incomeOfMonth($year){
+      $datasets = $this->incomeOfMonthData($year);
       $pointY = [];
       $pointXSs = [];
       $pointXSp = [];
@@ -105,11 +105,11 @@ class ReportController extends Controller
       
       // save File
       \File::put($this->photos_path."/pendapatanPerbulan/".date('d-Y').'.png', $image);
-      $pdf = PDF::loadView('reports.pendapatanBulanan',['datasets'=>$datasets]);
+      $pdf = PDF::loadView('reports.pendapatanBulanan',['datasets'=>$datasets, 'year'=>$year]);
       $pdf->setPaper([0, 0, 550, 900])->save(public_path('/files/report/pendapatanBulanan').'/'.date('d-Y').'.pdf');
       return $pdf->download(date('d-Y').'.pdf');
     }
-    public function incomeOfMonthData(){
+    public function incomeOfMonthData($year){
         return DB::select('SELECT * FROM
                             (
                               SELECT 1 AS MONTH
@@ -128,9 +128,9 @@ class ReportController extends Controller
                             (
                               SELECT sum(t.totalServices) Service, sum(t.totalSpareparts) Spareparts, sum(t.totalCost) Total, sum(t.diskon) Diskon, MONTH(t.created_at) createMonth
                               FROM transactions t 
-                              WHERE YEAR(t.created_at) = YEAR(CURDATE()) AND t.status = 3
+                              WHERE YEAR(t.created_at) = ? AND t.status = 3
                               GROUP BY MONTH(t.created_at)
-                            ) realCount ON months.MONTH = realCount.createMonth') ;
+                            ) realCount ON months.MONTH = realCount.createMonth',[$year]) ;
     }
     // Pendapatan Tahunan
     public function incomeOfYear(){
@@ -212,8 +212,8 @@ class ReportController extends Controller
         return $newData;
     }
     // PENGELUARAN BULANAN
-    public function outcomeOfMonth(){
-      $datasets = $this->outcomeOfMonthData();
+    public function outcomeOfMonth($year){
+      $datasets = $this->outcomeOfMonthData($year);
       $pointY = [];
       $pointX = [];
       $total = 0;
@@ -250,12 +250,12 @@ class ReportController extends Controller
       $PieChart->drawPieLegend(20,100,array("Alpha"=>20));
 
       \File::put($this->photos_path."/pengeluaranBulanan/".date('d-Y').'.png', $image);
-      $pdf = PDF::loadView('reports.pengeluaranBulanan',['datasets'=>$datasets]);
+      $pdf = PDF::loadView('reports.pengeluaranBulanan',['datasets'=>$datasets,'year'=>$year]);
       $pdf->setPaper([0, 0, 550, 900])->save(public_path('/files/report/pengeluaranBulanan').'/'.date('d-Y').'.pdf');
       return $pdf->download(date('d-Y').'.pdf');
 
     }
-    public function outcomeOfMonthData(){
+    public function outcomeOfMonthData($year){
       return DB::select('SELECT * FROM
                             (
                               SELECT 1 AS MONTH
@@ -276,24 +276,24 @@ class ReportController extends Controller
                                 SELECT sum(od.buy * od.totalAccept) totalBuy, MONTH(o.created_at) createMonth
                                 FROM orders o 
                                 join order_details od on od.order_id = o.id 
-                                WHERE YEAR(o.created_at) = YEAR(CURDATE()) AND o.status = 2
+                                WHERE YEAR(o.created_at) = ? AND o.status = 2
                                 GROUP BY MONTH(o.created_at)
                               ) n GROUP BY n.createMonth
-                            ) realCount ON months.MONTH = realCount.createMonth') ;
+                            ) realCount ON months.MONTH = realCount.createMonth',[$year]) ;
     }
     // PENJUALAN JASA
-    public function serviceReport(){
+    public function serviceReport($year,$month){
 
-      $datasets = $this->serviceReportData();
-      $pdf = PDF::loadView('reports.penjualanJasa',['datasets'=>$datasets]);
+      $datasets = $this->serviceReportData($year,$month);
+      $pdf = PDF::loadView('reports.penjualanJasa',['datasets'=>$datasets, 'year'=>$year,'month'=>$month]);
       $pdf->setPaper([0, 0, 550, 900])->save(public_path('/files/report/penjualanJasa').'/'.date('d-Y').'.pdf');
       return $pdf->download(date('d-Y').'.pdf');
     }
-    public function serviceReportData(){
+    public function serviceReportData($year,$month){
 
-      $datasets = \App\VehicleCustomer::with(['detailTransaction','vehicle'])->whereHas('detailTransaction', function ($query){
-                                                                                    $query->whereHas('transaction', function ($query2) {
-                                                                                      $query2->where([['status', 3],['created_at','LIKE',date('Y-m').'%']]);
+      $datasets = \App\VehicleCustomer::with(['detailTransaction','vehicle'])->whereHas('detailTransaction', function ($query) use ($year,$month){
+                                                                                    $query->whereHas('transaction', function ($query2) use ($year,$month){
+                                                                                      $query2->where([['status', 3],['created_at','LIKE',$year.'-'.$month.'%']]);
                                                                                     });
                                                                                   })->get();
       $temp = [];
@@ -313,17 +313,85 @@ class ReportController extends Controller
       }
       return $temp;
     }
-    public function leftOverStockData(){
-      return DB::select('SELECT sum(sb.stock) FROM sparepart_branches sb JOIN spareparts s ON sb.sparepart_code = s.code WHERE s.type = "Roda" GROUP BY s.type');
-      return DB::select('SELECT ord.createMonth, 
+    public function leftOverStock($year,$type){
+      $datasets = $this->leftOverStockData($year,$type);
+      $pointX = [];
+      foreach($datasets as $dt){
+        if($dt->Sisa == null){
+          $pointX[] =  0;
+        }else{
+          $pointX[] = $dt->Sisa;
+        }
+      }
+      $data = new Data();
+      $data->addPoints($pointX, "Sisa");
+      $data->addPoints($this->monthsData, "Labels");
+      $data->setPalette('Sisa',array("R"=>0,"G"=>0,"B"=>255,"Ticks"=>4,"Weight"=>3));
+      $data->setSerieDescription("Labels", "Bulan");
+      $data->setAbscissa("Labels");
+
+      /* Create the 1st chart */
+      $image = new Image(600, 400, $data);
+      $image->setGraphArea(80, 60, 500, 320);
+      $image->drawFilledRectangle(80, 60, 500, 320, [
+          "R" => 255,
+          "G" => 255,
+          "B" => 255,
+          "Surrounding" => -200,
+          "Alpha" => 60
+      ]);
+      $image->drawScale(["Mode"=>SCALE_MODE_START0,"DrawSubTicks" => true]);
+      $image->setShadow(true, ["X" => 1, "Y" => 1, "R" => 0, "G" => 0, "B" => 0, "Alpha" => 10]);
+      $image->setFontProperties(array("FontName"=>"../fonts/Forgotte.ttf","FontSize"=>10,"R"=>80,"G"=>80,"B"=>80));
+      $image->drawLineChart(["DisplayValues" => true, "DisplayColor" => "DISPLAY_AUTO"]);
+      $image->setShadow(false);
+
+      /* Write the legend */
+      $image->drawLegend(510, 205, ["Style" => LEGEND_NOBORDER, "Mode" => LEGEND_HORIZONTAL]);
+      \File::put($this->photos_path."/sisaStock/".date('d-Y').'.png', $image);
+      $pdf = PDF::loadView('reports.sisaStock',['datasets'=>$datasets,'year'=> $year,'type'=>$type]);
+      $pdf->setPaper([0, 0, 550, 900])->save(public_path('/files/report/sisaStock').'/'.date('d-Y').'.pdf');
+      return $pdf->download(date('d-Y').'.pdf');
+    }
+    public function leftOverStockData($year,$type){
+      try{
+      $startStock = DB::select('SELECT (spr.nowadayStock + trx.totalTransaksi - ord.allTotalAccept) startStock FROM (SELECT sum(sb.stock) nowadayStock, s.type FROM sparepart_branches sb JOIN spareparts s ON sb.sparepart_code = s.code WHERE s.type = ? GROUP BY s.type) spr
+                         JOIN (SELECT sum(od.totalAccept) allTotalAccept, s.type FROM orders o JOIN order_details od on od.order_id = o.id 
+                      JOIN spareparts s on od.sparepart_code = s.code 
+                      WHERE o.status = 2 AND s.type = ?) ord ON ord.type = spr.type 
+                      JOIN (SELECT sum(tds.total) totalTransaksi, sp.type FROM transactions t 
+                        join transaction_details td on td.transaction_id = t.id 
+                        join transactiondetail_spareparts tds on tds.trasanctiondetail_id = td.id 
+                        join spareparts sp on tds.sparepart_code = sp.code
+                        WHERE t.status = 3 AND sp.type = ?) trx ON trx.type = spr.type',[$type,$type,$type])[0]->startStock;
+
+      }catch(\Exception $e){
+        $startStock = 0;
+      }
+      
+      return DB::select('SELECT * FROM
+      (
+        SELECT 1 AS MONTH
+        UNION SELECT 2 AS MONTH
+        UNION SELECT 3 AS MONTH
+        UNION SELECT 4 AS MONTH
+        UNION SELECT 5 AS MONTH
+        UNION SELECT 6 AS MONTH
+        UNION SELECT 7 AS MONTH
+        UNION SELECT 8 AS MONTH
+        UNION SELECT 9 AS MONTH
+        UNION SELECT 10 AS MONTH
+        UNION SELECT 11 AS MONTH
+        UNION SELECT 12 AS MONTH
+      ) months LEFT JOIN
+      (SELECT ord.createMonth, 
       (CASE
-        WHEN ISNULL(trx.totalTransaksi) THEN ord.totalPemesanan
-        ELSE ord.totalPemesanan - trx.totalTransaksi
+        WHEN ISNULL(trx.totalTransaksi) THEN ord.totalPemesanan + ? ELSE ord.totalPemesanan - trx.totalTransaksi + ?
       END) Sisa FROM (
         SELECT MONTH(o.created_at) createMonth, sum(od.totalAccept) totalPemesanan FROM orders o 
       JOIN order_details od on od.order_id = o.id 
       JOIN spareparts s on od.sparepart_code = s.code 
-      WHERE o.status = 2 AND s.type = "Roda"
+      WHERE YEAR(o.created_at) = ? AND o.status = 2 AND s.type = ?
       GROUP BY MONTH(o.created_at)
       ) ord LEFT JOIN (
         SELECT sum(tds.total) totalTransaksi, sp.type, MONTH(t.created_at) createMonth
@@ -331,9 +399,9 @@ class ReportController extends Controller
       join transaction_details td on td.transaction_id = t.id 
       join transactiondetail_spareparts tds on tds.trasanctiondetail_id = td.id 
       join spareparts sp on tds.sparepart_code = sp.code
-      WHERE YEAR(t.created_at) = YEAR(CURDATE()) AND t.status = 3 AND sp.type = "Roda"
+      WHERE YEAR(t.created_at) = ? AND t.status = 3 AND sp.type = ?
       GROUP BY MONTH(t.created_at)
-      ) trx ON ord.createMonth = trx.createMonth');
+      ) trx ON ord.createMonth = trx.createMonth) realCount ON months.MONTH = realCount.createMonth',[$startStock,$startStock,$year,$type,$year,$type]);
 
     }
 }

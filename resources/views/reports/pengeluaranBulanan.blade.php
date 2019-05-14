@@ -28,10 +28,9 @@
                return number_format($nominal,2,",",".");
             }
             $priceTotal = 0; 
-            $tD = date("Y"); 
             $month = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
             ?>
-                <p style="text-align:left">Tahun : {{$tD}}</p>
+                <p style="text-align:left">Tahun : {{$year}}</p>
             </div>
             <table class="dataTable">
                 <tr class="rowTable" style="text-align:center">
