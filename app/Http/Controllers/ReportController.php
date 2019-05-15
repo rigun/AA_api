@@ -355,11 +355,17 @@ class ReportController extends Controller
     }
     public function leftOverStockData($year,$type){
       try{
-      $startStock = DB::select('SELECT (spr.nowadayStock + trx.totalTransaksi - ord.allTotalAccept) startStock FROM (SELECT sum(sb.stock) nowadayStock, s.type FROM sparepart_branches sb JOIN spareparts s ON sb.sparepart_code = s.code WHERE s.type = ? GROUP BY s.type) spr
-                         JOIN (SELECT sum(od.totalAccept) allTotalAccept, s.type FROM orders o JOIN order_details od on od.order_id = o.id 
-                      JOIN spareparts s on od.sparepart_code = s.code 
+      $startStock = DB::select('SELECT (CASE
+        WHEN ISNULL(trx.totalTransaksi) AND ISNULL(ord.allTotalAccept) THEN spr.nowadayStock 
+        WHEN ISNULL(trx.totalTransaksi) THEN spr.nowadayStock - ord.allTotalAccept 
+        WHEN ISNULL(ord.allTotalAccept) THEN spr.nowadayStock + trx.totalTransaksi 
+        ELSE spr.nowadayStock + trx.totalTransaksi - ord.allTotalAccept
+      END
+    ) startStock FROM (SELECT sum(sb.stock) nowadayStock, s.type FROM sparepart_branches sb JOIN spareparts s ON sb.sparepart_code = s.code WHERE s.type = ? GROUP BY s.type) spr
+                         LEFT JOIN (SELECT sum(od.totalAccept) allTotalAccept, s.type FROM orders o JOIN order_details od on od.order_id = o.id 
+                         LEFT JOIN spareparts s on od.sparepart_code = s.code 
                       WHERE o.status = 2 AND s.type = ?) ord ON ord.type = spr.type 
-                      JOIN (SELECT sum(tds.total) totalTransaksi, sp.type FROM transactions t 
+                      LEFT JOIN (SELECT sum(tds.total) totalTransaksi, sp.type FROM transactions t 
                         join transaction_details td on td.transaction_id = t.id 
                         join transactiondetail_spareparts tds on tds.trasanctiondetail_id = td.id 
                         join spareparts sp on tds.sparepart_code = sp.code
@@ -368,7 +374,6 @@ class ReportController extends Controller
       }catch(\Exception $e){
         $startStock = 0;
       }
-      
       return DB::select('SELECT * FROM
       (
         SELECT 1 AS MONTH
@@ -386,7 +391,10 @@ class ReportController extends Controller
       ) months LEFT JOIN
       (SELECT ord.createMonth, 
       (CASE
-        WHEN ISNULL(trx.totalTransaksi) THEN ord.totalPemesanan + ? ELSE ord.totalPemesanan - trx.totalTransaksi + ?
+        WHEN ISNULL(trx.totalTransaksi) AND ISNULL(ord.totalPemesanan) THEN ? 
+        WHEN ISNULL(trx.totalTransaksi) THEN ord.totalPemesanan + ? 
+        WHEN ISNULL(ord.totalPemesanan) THEN ? - trx.totalTransaksi 
+        ELSE ord.totalPemesanan - trx.totalTransaksi + ?
       END) Sisa FROM (
         SELECT MONTH(o.created_at) createMonth, sum(od.totalAccept) totalPemesanan FROM orders o 
       JOIN order_details od on od.order_id = o.id 
@@ -401,7 +409,7 @@ class ReportController extends Controller
       join spareparts sp on tds.sparepart_code = sp.code
       WHERE YEAR(t.created_at) = ? AND t.status = 3 AND sp.type = ?
       GROUP BY MONTH(t.created_at)
-      ) trx ON ord.createMonth = trx.createMonth) realCount ON months.MONTH = realCount.createMonth',[$startStock,$startStock,$year,$type,$year,$type]);
+      ) trx ON ord.createMonth = trx.createMonth) realCount ON months.MONTH = realCount.createMonth',[$startStock,$startStock,$startStock,$startStock,$startStock,$year,$type,$year,$type]);
 
     }
 }

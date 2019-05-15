@@ -18,6 +18,9 @@ class SparepartController extends Controller
         $this->photos_path = public_path('/images/sparepart');
 
     }
+    public function getLowSparepartStock(){
+        return SparepartBranch::whereColumn('stock','<','limitstock')->with(['sparepart','branch'])->get();
+    }
     public function showSupplierOfBranch($branch_id){
         $sp = SparepartBranch::where('branch_id',$branch_id)->get();
         $supplier = [];

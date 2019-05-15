@@ -125,6 +125,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/support/myVehicle/{idCustomer}','VehicleController@myVehicle');
 });
 // Report
+Route::get('/sparepartKurang','SparepartController@getLowSparepartStock');
 Route::get('/sparepartTerlaris/report/{year}','ReportController@sparepartOfYear');
 Route::get('/sparepartTerlaris/data','ReportController@sparepartOfYearData');
 Route::get('/pendapatanbulanan/report/{year}','ReportController@incomeOfMonth');
@@ -134,7 +135,7 @@ Route::get('/pendapatantahunan/data','ReportController@incomeOfYearData');
 Route::get('/pengeluaranbulanan/report/{year}','ReportController@outcomeOfMonth');
 Route::get('/pengeluaranbulanan/data','ReportController@outcomeOfMonthData');
 Route::get('/penjualanJasa/report/{year}/{month}','ReportController@serviceReport');
-Route::get('/sisaStock/data','ReportController@leftOverStockData');
+Route::get('/sisaStock/data/{year}/{type}','ReportController@leftOverStockData');
 Route::get('/sisaStock/report/{year}/{type}','ReportController@leftOverStock');
 // Report
 // Transaction
