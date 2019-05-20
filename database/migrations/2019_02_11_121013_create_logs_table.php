@@ -15,17 +15,8 @@ class CreateLogsTable extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('sparepart_code');
-            $table->foreign('sparepart_code')
-                    ->references('code')->on('spareparts');
-            $table->double('buy');
-            $table->double('sell');
-            $table->integer('totalBuy');
-            $table->string('transactionType');
-            $table->unsignedInteger('branch_id');
-            $table->foreign('branch_id')
-                    ->references('id')->on('branches')
-                    ->onDelete('cascade');
+            $table->string('sparepartType');
+            $table->integer('total');
             $table->timestamps();
         });
     }

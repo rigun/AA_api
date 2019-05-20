@@ -85,6 +85,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/montir/{branch_id}','EmployeeController@showMontirByBranch');
 
     Route::get('/transaction','TransactionController@index');
+    Route::get('/myhistory','TransactionController@historyByUser');
     Route::get('/transactionByBranch/{branch_id}','TransactionController@showByBranch');
     Route::post('/transaction','TransactionController@store');
     Route::post('/updateTransaction/{idTransaction}','TransactionController@update');

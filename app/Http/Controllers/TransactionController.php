@@ -17,6 +17,23 @@ class TransactionController extends Controller
         return 'Berhasil';
     }
     public function index(){
+        $userController = new UserController();
+        $role = $userController->getMyRole();
+        try{
+            $id = $userController->getPeopleId();
+        }catch(\Exception $e){
+            $id = 0;
+        }
+        if ($role == 'cs') {
+            return Transaction::where([['status',3],['cs_id',$id]])->with(['customer','cashier','cs','branch','detail'])->orderBy('created_at','desc')->get();
+        } else if ($role == 'kasir') {
+            return Transaction::where([['status',3],['cashier_id',$id]])->with(['customer','cashier','cs','branch','detail'])->orderBy('created_at','desc')->get();
+        } else {
+            return Transaction::where('status',3)->with(['customer','cashier','cs','branch','detail'])->orderBy('created_at','desc')->get();
+        }
+    }
+    public function historyByUser(){
+
         return Transaction::where('status',3)->with(['customer','cashier','cs','branch','detail'])->orderBy('created_at','desc')->get();
     }
     public function showByBranch($branch_id){

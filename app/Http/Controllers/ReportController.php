@@ -374,6 +374,27 @@ class ReportController extends Controller
       }catch(\Exception $e){
         $startStock = 0;
       }
+      $order = DB::select('SELECT MONTH(o.created_at) createMonth, sum(od.totalAccept) totalPemesanan FROM orders o 
+      JOIN order_details od on od.order_id = o.id 
+      JOIN spareparts s on od.sparepart_code = s.code 
+      WHERE YEAR(o.created_at) = ? AND o.status = 2 AND s.type = ?
+      GROUP BY MONTH(o.created_at)', [$year,$type]);
+      $trx = DB::select('SELECT sum(tds.total) totalTransaksi, sp.type, MONTH(t.created_at) createMonth
+      FROM transactions t 
+      join transaction_details td on td.transaction_id = t.id 
+      join transactiondetail_spareparts tds on tds.trasanctiondetail_id = td.id 
+      join spareparts sp on tds.sparepart_code = sp.code
+      WHERE YEAR(t.created_at) = ? AND t.status = 3 AND sp.type = ?
+      GROUP BY MONTH(t.created_at)',[$year,$type]);
+      if (!$order && !$trx){
+        return 'Sparepart';
+      } else if(!$order){
+        return 'Transaksi';
+      } else if(!$trx){
+        return 'Order';
+      } else {
+        return 'all';
+      }
       return DB::select('SELECT * FROM
       (
         SELECT 1 AS MONTH

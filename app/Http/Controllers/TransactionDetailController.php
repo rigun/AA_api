@@ -15,22 +15,44 @@ class TransactionDetailController extends Controller
 {
     public function mytransaction($idTransaction){
         $transaction = Transaction::where('id',$idTransaction)->with(['customer','cs'])->first();
-        
         $detailTransaction = TransactionDetail::where('transaction_id',$transaction->id)->with(['vehicleCustomer','montir'])->get();
         $i = 0;
+        $j = 0;
+        $tempTotal = 0;
         $sparepart = [];
         $service = [];
         $sparepartController = new SparepartController();
         foreach($detailTransaction as $dt){
-            $ts = TransactiondetailSparepart::where('trasanctiondetail_id',$dt->id)->with('sparepart')->get();
+            $ts = TransactiondetailSparepart::where('trasanctiondetail_id',$dt->id)->groupBy('sparepart_code')->selectRaw('*, sum(total) as total')->with('sparepart')->get();
             foreach($ts as $t){
-                $sparepart[$i]['data'] = $t;
-                $sparepart[$i]['position'] = $sparepartController->getPosition($t->sparepart_code,$transaction->branch_id);
-                $i++;
+                $ns = 0;
+                foreach($sparepart as $s){
+                    if($t->sparepart_code == $s['data']->sparepart_code){
+                        $s['data']->total += $t->total;
+                        break;
+                    }
+                    $ns++;
+                }
+                if ($ns == $i){
+                    $sparepart[$i]['data'] = $t;
+                    $sparepart[$i]['position'] = $sparepartController->getPosition($t->sparepart_code,$transaction->branch_id);
+                    $i++;
+                }
             }
             $sv = TransactiondetailService::where('trasanctiondetail_id',$dt->id)->with('service')->get(); 
             foreach($sv as $s){
-                $service[]= $s;
+                $ns = 0;
+                foreach($service as $svTemp){
+                    if($s->service_id == $svTemp->service_id){
+                        $svTemp->total += $s->total;
+                        break;
+                    }
+                    $ns++;
+                }
+                if ($ns == $j){
+                    $service[]= $s;
+                    $j++;
+                }
             }
         }
         return response()->json(['transaction'=>$transaction,'detailTransaction'=>$detailTransaction,'sparepart'=>$sparepart,'service'=>$service]);
@@ -44,6 +66,7 @@ class TransactionDetailController extends Controller
             'payment' => 'required'
         ]);
         $done = 0;
+        $j = 0;
         $t = Transaction::where('id',$idTransaction)->first();
         $t->diskon = $request->diskon;
         $t->totalServices = $request->totalServices;
@@ -70,16 +93,37 @@ class TransactionDetailController extends Controller
         foreach($detailTransaction as $dt){
             $ts = TransactiondetailSparepart::where('trasanctiondetail_id',$dt->id)->with('sparepart')->get();
             foreach($ts as $t){
-                $sparepart[$i]['data'] = $t;
-                $sparepart[$i]['position'] = $sparepartController->getPosition($t->sparepart_code,$transaction->branch_id);
-                $i++;
+                $ns = 0;
+                foreach($sparepart as $s){
+                    if($t->sparepart_code == $s['data']->sparepart_code){
+                        $s['data']->total += $t->total;
+                        break;
+                    }
+                    $ns++;
+                }
+                if ($ns == $i){
+                    $sparepart[$i]['data'] = $t;
+                    $sparepart[$i]['position'] = $sparepartController->getPosition($t->sparepart_code,$transaction->branch_id);
+                    $i++;
+                }
                 if($done == 0){
                     $sparepartController->decreaseStock($t->sparepart_code,$t->total,$transaction->branch_id);
                 }
             }
-            $sv = TransactiondetailService::where('trasanctiondetail_id',$dt->id)->with('service')->get(); 
+            $sv = TransactiondetailService::where('trasanctiondetail_id',$dt->id)->with('service')->groupBy('service_id')->selectRaw('*, sum(total) as total')->get(); 
             foreach($sv as $s){
-                $service[]= $s;
+                $ns = 0;
+                foreach($service as $svTemp){
+                    if($s->service_id == $svTemp->service_id){
+                        $svTemp->total += $s->total;
+                        break;
+                    }
+                    $ns++;
+                }
+                if ($ns == $j){
+                    $service[]= $s;
+                    $j++;
+                }
             }
 
             $customerVehicle[] = $dt->vehicleCustomer()->first();

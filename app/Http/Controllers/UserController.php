@@ -14,6 +14,9 @@ class UserController extends Controller
     public function getPeopleId(){
         return JWTAuth::parseToken()->authenticate()->people_id;
     }
+    public function getMyRole(){
+        return JWTAuth::parseToken()->authenticate()->role()->first()->name;
+    }
     public function dashboard(){
         $vehicle = new VehicleController();
         $person = new PersonController();

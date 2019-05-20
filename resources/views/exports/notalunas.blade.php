@@ -86,7 +86,6 @@
                     <th>Kode</th>
                     <th>Nama</th>
                     <th>Merk</th>
-                    <th>Rak</th>
                     <th style="text-align: right">Jumlah</th>
                     <th style="text-align: right">Subtotal</th>
                 </tr>
@@ -96,8 +95,6 @@
                     <td>{{$dtsp['data']->sparepart_code}}</td>
                     <td>{{$dtsp['data']->sparepart->name}}</td>
                     <td>{{$dtsp['data']->sparepart->merk}}</td>
-                    <td>{{$dtsp['position']}}</td>
-
                     <td style="text-align: right">{{$dtsp['data']->total}}</td>
                     <?php
                     $number = $dtsp['data']->total * $dtsp['data']->price;
